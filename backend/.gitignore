@@ -8,6 +8,16 @@
 # testing
 /coverage
 
+# data
+/products.json
+/stores.json
+
+
+# images
+/productImages
+/storeAssets
+
+
 # production
 /build
 

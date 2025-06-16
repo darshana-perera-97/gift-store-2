@@ -224,6 +224,20 @@ app.post("/orderProduct", async (req, res) => {
   }
 });
 
+// --- PUBLIC: LIST ALL PRODUCTS ---
+// GET /viewProducts
+app.get("/viewProducts", (req, res) => {
+  try {
+    const allProducts = readJSON(PRODUCTS_FILE);
+    // if you only want active products, uncomment the next line:
+    // const active = allProducts.filter(p => p.status === 'active');
+    res.json(allProducts);
+  } catch (err) {
+    console.error("Error reading products:", err);
+    res.status(500).json({ error: "Could not load products." });
+  }
+});
+
 // --- START SERVER ---
 const PORT = process.env.PORT || 3031;
 app.listen(PORT, () => {
