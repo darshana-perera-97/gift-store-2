@@ -8,15 +8,21 @@ import {
 } from "react-router-dom";
 import "./App.css";
 
+// Components
+import Navigation from "./components/Navigation";
+import Footer from "./components/Footer";
+
 // --- Admin-side ---
-import Login from "./pages/Login";
+import AdminPage from "./pages/AdminPage";
 import StoreList from "./pages/StoreList";
 import AddStore from "./pages/AddStore";
 import { AuthProvider } from "./components/AuthProvider";
 import { PrivateRoute } from "./components/PrivateRoute";
 
-// --- Public Homepage ---
+// --- Public Pages ---
+import LandingPage from "./pages/LandingPage";
 import HomePage from "./pages/HomePage";
+import PublicStores from "./pages/PublicStores";
 
 // --- Customer-facing Store Page ---
 import StoreCustomerPage from "./pages/StoreCustomerPage";
@@ -34,67 +40,79 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <Routes>
-          {/* Public Homepage */}
-          <Route path="/" element={<HomePage />} />
+        <div className="d-flex flex-column min-vh-100">
+          <Navigation />
+          <main className="flex-grow-1">
+            <Routes>
+              {/* Public Landing Page */}
+              <Route path="/" element={<LandingPage />} />
 
-          {/* Admin back-office */}
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/stores"
-            element={
-              <PrivateRoute>
-                <StoreList />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/add-store"
-            element={
-              <PrivateRoute>
-                <AddStore />
-              </PrivateRoute>
-            }
-          />
+              {/* Public Homepage */}
+              <Route path="/home" element={<HomePage />} />
 
-          {/* Customer View of a Store */}
-          <Route path="/store/:storeId" element={<StoreCustomerPage />} />
+              {/* Public Store List - for visitors */}
+              <Route path="/stores" element={<PublicStores />} />
 
-          {/* Store-Admin Login (per-store) */}
-          <Route
-            path="/store/:storeId/admin/login"
-            element={<StoreAdminLogin />}
-          />
+              {/* Admin back-office */}
+              <Route path="/admin" element={<AdminPage />} />
+              <Route
+                path="/admin/stores"
+                element={
+                  <PrivateRoute>
+                    <StoreList />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/admin/add-store"
+                element={
+                  <PrivateRoute>
+                    <AddStore />
+                  </PrivateRoute>
+                }
+              />
 
-          {/* Store-Admin Dashboard */}
-          <Route
-            path="/store/:storeId/admin"
-            element={
-              <StoreAdminRoute>
-                <StoreAdminPage />
-              </StoreAdminRoute>
-            }
-          />
+              {/* Customer View of a Store */}
+              <Route path="/store/:storeId" element={<StoreCustomerPage />} />
 
-          {/* Store-Admin Add Product */}
-          <Route
-            path="/store/:storeId/admin/add-product"
-            element={
-              <StoreAdminRoute>
-                <AddProduct />
-              </StoreAdminRoute>
-            }
-          />
+              {/* Store-Admin Login (per-store) */}
+              <Route
+                path="/store/:storeId/admin/login"
+                element={<StoreAdminLogin />}
+              />
 
-          {/* Public Product Detail / Order Page */}
-          <Route
-            path="/store/:storeId/product/:productId"
-            element={<ProductPage />}
-          />
+              {/* Store-Admin Dashboard */}
+              <Route
+                path="/store/:storeId/admin"
+                element={
+                  <StoreAdminRoute>
+                    <StoreAdminPage />
+                  </StoreAdminRoute>
+                }
+              />
 
-          {/* Fallback: redirect unknown URLs to home */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+              {/* Store-Admin Add Product */}
+              <Route
+                path="/store/:storeId/admin/add-product"
+                element={
+                  <StoreAdminRoute>
+                    <AddProduct />
+                  </StoreAdminRoute>
+                }
+              />
+
+              {/* Public Product Detail / Order Page */}
+              <Route
+                path="/store/:storeId/product/:productId"
+                element={<ProductPage />}
+              />
+
+              {/* Fallback: redirect unknown URLs to home */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
       </Router>
     </AuthProvider>
   );
