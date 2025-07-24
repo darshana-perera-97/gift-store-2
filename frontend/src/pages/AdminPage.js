@@ -53,7 +53,7 @@ export default function AdminPage() {
       
       if (username === 'admin' && password === 'admin') {
         login(username);
-        navigate('/admin/stores');
+        navigate('/Admin/stores');
       } else {
         setError('Invalid credentials. Please try again.');
       }
@@ -166,11 +166,11 @@ export default function AdminPage() {
                 </div>
               ) : (
                 <div className="d-flex gap-3">
-                  <Link to="/admin/stores" className="btn btn-light btn-lg">
+                  <Link to="/Admin/stores" className="btn btn-light btn-lg">
                     <i className="fas fa-store me-2"></i>
                     Manage Stores
                   </Link>
-                  <Link to="/admin/add-store" className="btn btn-outline-light btn-lg">
+                  <Link to="/Admin/add-store" className="btn btn-outline-light btn-lg">
                     <i className="fas fa-plus me-2"></i>
                     Add Store
                   </Link>
@@ -242,7 +242,7 @@ export default function AdminPage() {
             {products.slice(0, 8).map(product => (
               <div key={product.productId} className="col-lg-3 col-md-4 col-sm-6">
                 <Link 
-                  to={`/store/${product.storeId}/product/${product.productId}`}
+                  to={`/product/${product.productId}`}
                   className="text-decoration-none"
                 >
                   <div className="card product-card h-100">
@@ -251,6 +251,7 @@ export default function AdminPage() {
                         src={`http://localhost:3031/productImages/${product.images[0]}`}
                         className="card-img-top"
                         alt={product.productName}
+                        style={{ height: '200px', objectFit: 'cover' }}
                       />
                     )}
                     <div className="card-body d-flex flex-column">
@@ -267,7 +268,7 @@ export default function AdminPage() {
           </div>
           {products.length > 8 && (
             <div className="text-center mt-4">
-              <Link to="/admin/stores" className="btn btn-outline-primary btn-lg">
+              <Link to="/Admin/stores" className="btn btn-outline-primary btn-lg">
                 View All Products
               </Link>
             </div>
@@ -283,7 +284,7 @@ export default function AdminPage() {
             {stores.map(store => (
               <div key={store.storeId} className="col-lg-4 col-md-6">
                 <Link 
-                  to={`/store/${store.storeId}`}
+                  to={`/${store.storeName}`}
                   className="text-decoration-none"
                 >
                   <div className="card store-card h-100">
@@ -292,6 +293,7 @@ export default function AdminPage() {
                         src={`http://localhost:3031/storeAssets/${store.propic}`}
                         className="card-img-top"
                         alt={store.storeName}
+                        style={{ height: '200px', objectFit: 'cover' }}
                       />
                     )}
                     <div className="card-body">
@@ -311,7 +313,7 @@ export default function AdminPage() {
           </div>
           {stores.length > 0 && (
             <div className="text-center mt-4">
-              <Link to="/admin/stores" className="btn btn-primary btn-lg">
+              <Link to="/Admin/stores" className="btn btn-primary btn-lg">
                 <i className="fas fa-store me-2"></i>
                 Manage All Stores
               </Link>
@@ -328,11 +330,11 @@ export default function AdminPage() {
             Take control of your gift store platform and help local businesses grow.
           </p>
           <div className="d-flex justify-content-center gap-3">
-            <Link to="/admin/stores" className="btn btn-light btn-lg">
+            <Link to="/Admin/stores" className="btn btn-light btn-lg">
               <i className="fas fa-store me-2"></i>
               Manage Stores
             </Link>
-            <Link to="/admin/add-store" className="btn btn-outline-light btn-lg">
+            <Link to="/Admin/add-store" className="btn btn-outline-light btn-lg">
               <i className="fas fa-plus me-2"></i>
               Add New Store
             </Link>

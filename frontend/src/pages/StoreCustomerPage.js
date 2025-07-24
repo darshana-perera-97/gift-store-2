@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 
 export default function StoreCustomerPage() {
-  const { storeId } = useParams();
+  const { storeName } = useParams();
   const navigate = useNavigate();
   const [store, setStore] = useState(null);
   const [products, setProducts] = useState([]);
@@ -11,10 +11,10 @@ export default function StoreCustomerPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Load store data
+        // Load store data by storeName
         const storesResponse = await fetch("http://localhost:3031/viewStores");
         const allStores = await storesResponse.json();
-        const currentStore = allStores.find((s) => s.storeId === storeId);
+        const currentStore = allStores.find((s) => s.storeName === storeName);
         
         if (!currentStore) {
           navigate("/");
@@ -24,7 +24,7 @@ export default function StoreCustomerPage() {
         setStore(currentStore);
 
         // Load store products
-        const productsResponse = await fetch(`http://localhost:3031/products/${storeId}`);
+        const productsResponse = await fetch(`http://localhost:3031/products/${currentStore.storeId}`);
         const storeProducts = await productsResponse.json();
         setProducts(storeProducts);
       } catch (error) {
@@ -35,7 +35,7 @@ export default function StoreCustomerPage() {
     };
 
     fetchData();
-  }, [storeId, navigate]);
+  }, [storeName, navigate]);
 
   if (loading) {
     return (
@@ -100,7 +100,7 @@ export default function StoreCustomerPage() {
           </div>
           <div className="col-md-4 text-md-end">
             <Link 
-              to={`/store/${storeId}/admin/login`} 
+              to={`/${storeName}/admin/login`} 
               className="btn btn-outline-primary"
             >
               <i className="fas fa-cog me-2"></i>
@@ -125,7 +125,7 @@ export default function StoreCustomerPage() {
                 {products.map((product) => (
                   <div key={product.productId} className="col-lg-3 col-md-4 col-sm-6">
                     <Link
-                      to={`/store/${storeId}/product/${product.productId}`}
+                      to={`/product/${product.productId}`}
                       className="text-decoration-none"
                     >
                       <div className="card product-card h-100">
@@ -134,6 +134,7 @@ export default function StoreCustomerPage() {
                             src={`http://localhost:3031/productImages/${product.images[0]}`}
                             className="card-img-top"
                             alt={product.productName}
+                            style={{ height: '200px', objectFit: 'cover' }}
                           />
                         )}
                         <div className="card-body d-flex flex-column">
@@ -141,7 +142,13 @@ export default function StoreCustomerPage() {
                           <p className="card-text text-muted flex-grow-1">
                             {product.description || 'Amazing product from this store'}
                           </p>
-                          <div className="price">Rs. {product.price}</div>
+                          <div className="d-flex justify-content-between align-items-center">
+                            <div className="price">Rs. {product.price}</div>
+                            <button className="btn btn-outline-primary btn-sm">
+                              <i className="fas fa-eye me-1"></i>
+                              View Product
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </Link>

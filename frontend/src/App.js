@@ -20,12 +20,9 @@ import { AuthProvider } from "./components/AuthProvider";
 import { PrivateRoute } from "./components/PrivateRoute";
 
 // --- Public Pages ---
-import LandingPage from "./pages/LandingPage";
 import HomePage from "./pages/HomePage";
-import PublicStores from "./pages/PublicStores";
-
-// --- Customer-facing Store Page ---
 import StoreCustomerPage from "./pages/StoreCustomerPage";
+import ProductPage from "./pages/ProductPage";
 
 // --- Store-Admin pages & guard ---
 import StoreAdminLogin from "./pages/StoreAdminLogin";
@@ -33,8 +30,9 @@ import StoreAdminPage from "./pages/StoreAdminPage";
 import AddProduct from "./pages/AddProduct";
 import StoreAdminRoute from "./components/StoreAdminRoute";
 
-// --- Public Product Page ---
-import ProductPage from "./pages/ProductPage";
+// --- Store Management ---
+import StoreManagement from "./pages/StoreManagement";
+import EditProduct from "./pages/EditProduct";
 
 function App() {
   return (
@@ -44,19 +42,19 @@ function App() {
           <Navigation />
           <main className="flex-grow-1">
             <Routes>
-              {/* Public Landing Page */}
-              <Route path="/" element={<LandingPage />} />
+              {/* 01. Home page - URL: / */}
+              <Route path="/" element={<HomePage />} />
 
-              {/* Public Homepage */}
-              <Route path="/home" element={<HomePage />} />
+              {/* 02. Single Store - URL: /[storeName] */}
+              <Route path="/:storeName" element={<StoreCustomerPage />} />
 
-              {/* Public Store List - for visitors */}
-              <Route path="/stores" element={<PublicStores />} />
+              {/* 03. Single Product Page - URL: /productid */}
+              <Route path="/product/:productId" element={<ProductPage />} />
 
-              {/* Admin back-office */}
-              <Route path="/admin" element={<AdminPage />} />
+              {/* 04. Super Admin - URL: /Admin */}
+              <Route path="/Admin" element={<AdminPage />} />
               <Route
-                path="/admin/stores"
+                path="/Admin/stores"
                 element={
                   <PrivateRoute>
                     <StoreList />
@@ -64,7 +62,7 @@ function App() {
                 }
               />
               <Route
-                path="/admin/add-store"
+                path="/Admin/add-store"
                 element={
                   <PrivateRoute>
                     <AddStore />
@@ -72,28 +70,21 @@ function App() {
                 }
               />
 
-              {/* Customer View of a Store */}
-              <Route path="/store/:storeId" element={<StoreCustomerPage />} />
-
-              {/* Store-Admin Login (per-store) */}
+              {/* 05. Store Admin - URL: /[storeName]/admin */}
               <Route
-                path="/store/:storeId/admin/login"
+                path="/:storeName/admin/login"
                 element={<StoreAdminLogin />}
               />
-
-              {/* Store-Admin Dashboard */}
               <Route
-                path="/store/:storeId/admin"
+                path="/:storeName/admin"
                 element={
                   <StoreAdminRoute>
                     <StoreAdminPage />
                   </StoreAdminRoute>
                 }
               />
-
-              {/* Store-Admin Add Product */}
               <Route
-                path="/store/:storeId/admin/add-product"
+                path="/:storeName/admin/add-product"
                 element={
                   <StoreAdminRoute>
                     <AddProduct />
@@ -101,10 +92,16 @@ function App() {
                 }
               />
 
-              {/* Public Product Detail / Order Page */}
+              {/* 06. Store Management - URL: /[storeName]/manage */}
               <Route
-                path="/store/:storeId/product/:productId"
-                element={<ProductPage />}
+                path="/:storeName/manage"
+                element={<StoreManagement />}
+              />
+
+              {/* 07. Edit Product - URL: /[storeName]/edit-product/[productId] */}
+              <Route
+                path="/:storeName/edit-product/:productId"
+                element={<EditProduct />}
               />
 
               {/* Fallback: redirect unknown URLs to home */}

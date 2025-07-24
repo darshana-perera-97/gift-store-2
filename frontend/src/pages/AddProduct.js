@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 
 export default function AddProduct() {
-  const { storeId } = useParams();
+  const { storeName } = useParams();
   const navigate = useNavigate();
 
   const [productName, setName] = useState('');
@@ -21,7 +21,7 @@ export default function AddProduct() {
       try {
         const res = await fetch('http://localhost:3031/viewStores');
         const stores = await res.json();
-        const store = stores.find(s => s.storeId === storeId);
+        const store = stores.find(s => s.storeName === storeName);
         if (store) {
           setStoreInfo(store);
         }
@@ -31,7 +31,7 @@ export default function AddProduct() {
     };
 
     fetchStoreInfo();
-  }, [storeId]);
+  }, [storeName]);
 
   const handleIncludeChange = (idx, val) => {
     const arr = [...includes];
@@ -63,8 +63,14 @@ export default function AddProduct() {
     setLoading(true);
     setError('');
 
+    if (!storeInfo) {
+      setError('Store information not found');
+      setLoading(false);
+      return;
+    }
+
     const form = new FormData();
-    form.append('storeId', storeId);
+    form.append('storeId', storeInfo.storeId);
     form.append('productName', productName);
     form.append('description', description);
     form.append('price', price);
@@ -78,7 +84,7 @@ export default function AddProduct() {
       });
       const body = await res.json();
       if (!body.success) throw new Error(body.error || 'Failed to add product');
-      navigate(`/store/${storeId}/admin`);
+      navigate(`/${storeName}/admin`);
     } catch (err) {
       console.error(err);
       setError('Could not add product. Please try again.');
@@ -101,7 +107,7 @@ export default function AddProduct() {
           </p>
         </div>
         <div className="col-md-4 text-md-end">
-          <Link to={`/store/${storeId}/admin`} className="btn btn-outline-secondary">
+          <Link to={`/${storeName}/admin`} className="btn btn-outline-secondary">
             <i className="fas fa-arrow-left me-2"></i>
             Back to Dashboard
           </Link>
@@ -269,7 +275,7 @@ export default function AddProduct() {
                     )}
                   </button>
                   <Link
-                    to={`/store/${storeId}/admin`}
+                    to={`/${storeName}/admin`}
                     className="btn btn-outline-secondary"
                     disabled={loading}
                   >

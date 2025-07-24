@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 
 export default function StoreAdminLogin() {
-  const { storeId } = useParams();
+  const { storeName } = useParams();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -16,7 +16,7 @@ export default function StoreAdminLogin() {
       try {
         const res = await fetch('http://localhost:3031/viewStores');
         const stores = await res.json();
-        const store = stores.find(s => s.storeId === storeId);
+        const store = stores.find(s => s.storeName === storeName);
         if (store) {
           setStoreInfo(store);
         }
@@ -26,7 +26,7 @@ export default function StoreAdminLogin() {
     };
 
     fetchStoreInfo();
-  }, [storeId]);
+  }, [storeName]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,7 +37,7 @@ export default function StoreAdminLogin() {
       const res = await fetch('http://localhost:3031/viewStores');
       const list = await res.json();
       const store = list.find(
-        s => s.storeId === storeId &&
+        s => s.storeName === storeName &&
              s.email === email &&
              s.password === password &&
              s.status === 'active'
@@ -50,7 +50,7 @@ export default function StoreAdminLogin() {
       
       // Store in localStorage and go to admin dashboard
       localStorage.setItem('store', JSON.stringify(store));
-      navigate(`/store/${storeId}/admin`);
+      navigate(`/${storeName}/admin`);
     } catch (error) {
       setError('Login failed. Please try again.');
     } finally {
@@ -140,14 +140,14 @@ export default function StoreAdminLogin() {
               <div className="text-center mt-4">
                 <small className="text-muted">
                   <i className="fas fa-info-circle me-1"></i>
-                  Store ID: {storeId}
+                  Store: {storeName}
                 </small>
               </div>
               
               <hr className="my-4" />
               
               <div className="text-center">
-                <Link to={`/store/${storeId}`} className="btn btn-outline-secondary btn-sm">
+                <Link to={`/${storeName}`} className="btn btn-outline-secondary btn-sm">
                   <i className="fas fa-arrow-left me-1"></i>
                   Back to Store
                 </Link>

@@ -123,6 +123,25 @@ app.post("/changeStatus", (req, res) => {
   res.json({ success: true, store });
 });
 
+// 3.5. Update store details
+//    JSON body: { storeId, storeName, location, email, tp, description }
+app.post("/updateStore", (req, res) => {
+  const { storeId, storeName, location, email, tp, description } = req.body;
+  const stores = readJSON(STORES_FILE);
+  const store = stores.find((s) => s.storeId === storeId);
+  if (!store) return res.status(404).json({ error: "Store not found" });
+  
+  // Update store details
+  store.storeName = storeName || store.storeName;
+  store.location = location || store.location;
+  store.email = email || store.email;
+  store.tp = tp || store.tp;
+  store.description = description || store.description;
+  
+  writeJSON(STORES_FILE, stores);
+  res.json({ success: true, store });
+});
+
 // --- STORE-ADMIN: PRODUCT MANAGEMENT ---
 
 // 4. Add a product
@@ -178,9 +197,20 @@ app.get("/product/:productId", (req, res) => {
 // --- CUSTOMER: ORDER & EMAIL ---
 
 // 7. Place an order
-//    JSON body: { productId, quantity, customerName, customerEmail }
+//    JSON body: { productId, quantity, customerName, customerEmail, customerPhone, customerAddress, storeEmail, productName, storeName, totalAmount }
 app.post("/orderProduct", async (req, res) => {
-  const { productId, quantity, customerName, customerEmail } = req.body;
+  const { 
+    productId, 
+    quantity, 
+    customerName, 
+    customerEmail, 
+    customerPhone, 
+    customerAddress,
+    storeEmail,
+    productName,
+    storeName,
+    totalAmount
+  } = req.body;
 
   // Lookup product
   const products = readJSON(PRODUCTS_FILE);
@@ -204,20 +234,50 @@ app.post("/orderProduct", async (req, res) => {
   });
 
   const mailOpts = {
-    from: `"Order Bot" <${process.env.SMTP_USER}>`,
+    from: `"GiftStore Order" <${process.env.SMTP_USER}>`,
     to: store.email,
-    subject: `New Order: ${product.productName}`,
+    subject: `New Order: ${product.productName} - Rs. ${totalAmount}`,
     html: `
-      <h3>You've got a new order!</h3>
-      <p><strong>Product:</strong> ${product.productName}</p>
-      <p><strong>Quantity:</strong> ${quantity}</p>
-      <p><strong>Customer:</strong> ${customerName} (${customerEmail})</p>
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #6f42c1; border-bottom: 2px solid #6f42c1; padding-bottom: 10px;">
+          🎉 New Order Received!
+        </h2>
+        
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #333; margin-top: 0;">Order Details</h3>
+          <p><strong>Product:</strong> ${product.productName}</p>
+          <p><strong>Quantity:</strong> ${quantity}</p>
+          <p><strong>Total Amount:</strong> Rs. ${totalAmount}</p>
+          <p><strong>Order Date:</strong> ${new Date().toLocaleString()}</p>
+        </div>
+        
+        <div style="background: #e8f5e8; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #333; margin-top: 0;">Customer Information</h3>
+          <p><strong>Name:</strong> ${customerName}</p>
+          <p><strong>Email:</strong> ${customerEmail}</p>
+          <p><strong>Phone:</strong> ${customerPhone}</p>
+          <p><strong>Address:</strong> ${customerAddress}</p>
+        </div>
+        
+        <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #333; margin-top: 0;">Next Steps</h3>
+          <p>Please contact the customer to confirm the order and arrange delivery/pickup.</p>
+          <p>You can reach them at: <a href="mailto:${customerEmail}">${customerEmail}</a> or call: ${customerPhone}</p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+          <p style="color: #666; font-size: 14px;">
+            This order was placed through GiftStore platform.<br>
+            Store: ${store.storeName}
+          </p>
+        </div>
+      </div>
     `,
   };
 
   try {
     await transporter.sendMail(mailOpts);
-    res.json({ success: true, message: "Order placed & email sent." });
+    res.json({ success: true, message: "Order placed & email sent to store." });
   } catch (err) {
     console.error("Email send error:", err);
     res.status(500).json({ error: "Failed to send email" });
@@ -235,6 +295,104 @@ app.get("/viewProducts", (req, res) => {
   } catch (err) {
     console.error("Error reading products:", err);
     res.status(500).json({ error: "Could not load products." });
+  }
+});
+
+// --- STORE MANAGEMENT: UPDATE PRODUCT STATUS ---
+// POST /updateProductStatus
+// JSON body: { productId, status }
+app.post("/updateProductStatus", (req, res) => {
+  const { productId, status } = req.body;
+  
+  if (!productId || !status) {
+    return res.status(400).json({ error: "Product ID and status are required" });
+  }
+
+  try {
+    const products = readJSON(PRODUCTS_FILE);
+    const productIndex = products.findIndex(p => p.productId === productId);
+    
+    if (productIndex === -1) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    // Update product status
+    products[productIndex].status = status;
+    writeJSON(PRODUCTS_FILE, products);
+    
+    res.json({ success: true, message: "Product status updated successfully" });
+  } catch (err) {
+    console.error("Error updating product status:", err);
+    res.status(500).json({ error: "Failed to update product status" });
+  }
+});
+
+// --- STORE MANAGEMENT: DELETE PRODUCT ---
+// POST /deleteProduct
+// JSON body: { productId }
+app.post("/deleteProduct", (req, res) => {
+  const { productId } = req.body;
+  
+  if (!productId) {
+    return res.status(400).json({ error: "Product ID is required" });
+  }
+
+  try {
+    const products = readJSON(PRODUCTS_FILE);
+    const filteredProducts = products.filter(p => p.productId !== productId);
+    
+    if (filteredProducts.length === products.length) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    writeJSON(PRODUCTS_FILE, filteredProducts);
+    res.json({ success: true, message: "Product deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting product:", err);
+    res.status(500).json({ error: "Failed to delete product" });
+  }
+});
+
+// --- STORE MANAGEMENT: UPDATE PRODUCT ---
+// POST /updateProduct
+// FormData: { productId, productName, description, price, status, includes[], images[] }
+app.post("/updateProduct", uploadProd.array('images', 5), (req, res) => {
+  const { productId, productName, description, price, status } = req.body;
+  const includes = Array.isArray(req.body.includes) ? req.body.includes : [req.body.includes];
+  
+  if (!productId || !productName || !description || !price) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  try {
+    const products = readJSON(PRODUCTS_FILE);
+    const productIndex = products.findIndex(p => p.productId === productId);
+    
+    if (productIndex === -1) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    // Update product data
+    products[productIndex] = {
+      ...products[productIndex],
+      productName,
+      description,
+      price: Number(price),
+      status: status || 'live',
+      includes: includes.filter(inc => inc.trim())
+    };
+
+    // Handle new images if provided
+    if (req.files && req.files.length > 0) {
+      const imageNames = req.files.map(file => file.filename);
+      products[productIndex].images = imageNames;
+    }
+
+    writeJSON(PRODUCTS_FILE, products);
+    res.json({ success: true, message: "Product updated successfully" });
+  } catch (err) {
+    console.error("Error updating product:", err);
+    res.status(500).json({ error: "Failed to update product" });
   }
 });
 

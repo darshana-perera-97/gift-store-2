@@ -3,12 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
 export default function ProductPage() {
-  const { storeId, productId } = useParams();
+  const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [store, setStore] = useState(null);
   const [qty, setQty] = useState(1);
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+  const [customerAddress, setCustomerAddress] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [orderLoading, setOrderLoading] = useState(false);
@@ -26,7 +28,7 @@ export default function ProductPage() {
         // Fetch store info
         const storesResponse = await fetch('http://localhost:3031/viewStores');
         const storesData = await storesResponse.json();
-        const currentStore = storesData.find(s => s.storeId === storeId);
+        const currentStore = storesData.find(s => s.storeId === productData.storeId);
         setStore(currentStore);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -36,7 +38,7 @@ export default function ProductPage() {
     };
 
     fetchData();
-  }, [productId, storeId]);
+  }, [productId]);
 
   const handleOrder = async e => {
     e.preventDefault();
@@ -52,15 +54,23 @@ export default function ProductPage() {
           quantity: qty,
           customerName,
           customerEmail,
+          customerPhone,
+          customerAddress,
+          storeEmail: store?.email || '',
+          productName: product?.productName || '',
+          storeName: store?.storeName || '',
+          totalAmount: product?.price * qty
         }),
       });
       const body = await res.json();
       
       if (body.success) {
-        setMessage('Order placed successfully! Check your email for confirmation.');
+        setMessage('Order placed successfully! The store will contact you soon.');
         setQty(1);
         setCustomerName('');
         setCustomerEmail('');
+        setCustomerPhone('');
+        setCustomerAddress('');
       } else {
         throw new Error(body.error || 'Order failed');
       }
@@ -101,9 +111,11 @@ export default function ProductPage() {
           <li className="breadcrumb-item">
             <Link to="/">Home</Link>
           </li>
-          <li className="breadcrumb-item">
-            <Link to={`/store/${storeId}`}>{store?.storeName || 'Store'}</Link>
-          </li>
+          {store && (
+            <li className="breadcrumb-item">
+              <Link to={`/${store.storeName}`}>{store.storeName}</Link>
+            </li>
+          )}
           <li className="breadcrumb-item active" aria-current="page">
             {product.productName}
           </li>
@@ -247,6 +259,39 @@ export default function ProductPage() {
                       </div>
                     </div>
 
+                    <div className="row">
+                      <div className="col-md-6 mb-3">
+                        <label htmlFor="customerPhone" className="form-label">
+                          <i className="fas fa-phone me-2"></i>
+                          Your Phone
+                        </label>
+                        <input
+                          type="tel"
+                          className="form-control"
+                          id="customerPhone"
+                          value={customerPhone}
+                          onChange={e => setCustomerPhone(e.target.value)}
+                          required
+                          disabled={orderLoading}
+                        />
+                      </div>
+                      <div className="col-md-6 mb-3">
+                        <label htmlFor="customerAddress" className="form-label">
+                          <i className="fas fa-map-marker-alt me-2"></i>
+                          Your Address
+                        </label>
+                        <textarea
+                          className="form-control"
+                          id="customerAddress"
+                          rows="2"
+                          value={customerAddress}
+                          onChange={e => setCustomerAddress(e.target.value)}
+                          required
+                          disabled={orderLoading}
+                        ></textarea>
+                      </div>
+                    </div>
+
                     <div className="d-grid">
                       <button 
                         type="submit" 
@@ -299,7 +344,7 @@ export default function ProductPage() {
                   </div>
                   <div className="col-md-4 text-md-end">
                     <Link 
-                      to={`/store/${storeId}`} 
+                      to={`/${store.storeName}`} 
                       className="btn btn-outline-primary"
                     >
                       <i className="fas fa-store me-2"></i>
