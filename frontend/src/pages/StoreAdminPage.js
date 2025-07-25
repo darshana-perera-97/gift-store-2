@@ -92,6 +92,10 @@ export default function StoreAdminPage() {
               <i className="fas fa-sign-out-alt me-2"></i>
               Logout
             </button>
+            <Link to={`/${storeName}/admin/settings`} className="btn btn-outline-primary">
+              <i className="fas fa-cog me-2"></i>
+              Settings
+            </Link>
             <Link to={`/${storeName}/admin/add-product`} className="btn btn-success">
               <i className="fas fa-plus me-2"></i>
               Add Product

@@ -98,15 +98,7 @@ export default function StoreCustomerPage() {
               </div>
             </div>
           </div>
-          <div className="col-md-4 text-md-end">
-            <Link 
-              to={`/${storeName}/admin/login`} 
-              className="btn btn-outline-primary"
-            >
-              <i className="fas fa-cog me-2"></i>
-              Store Admin
-            </Link>
-          </div>
+
         </div>
 
         {/* Products Section */}

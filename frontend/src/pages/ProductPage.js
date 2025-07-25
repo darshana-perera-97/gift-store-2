@@ -14,6 +14,8 @@ export default function ProductPage() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [orderLoading, setOrderLoading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,6 +32,10 @@ export default function ProductPage() {
         const storesData = await storesResponse.json();
         const currentStore = storesData.find(s => s.storeId === productData.storeId);
         setStore(currentStore);
+
+        // Check if product is in favorites
+        const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+        setIsFavorite(favorites.includes(productId));
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -82,10 +88,26 @@ export default function ProductPage() {
     }
   };
 
+  const handleFavorite = () => {
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    
+    if (isFavorite) {
+      // Remove from favorites
+      const updatedFavorites = favorites.filter(id => id !== productId);
+      localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+      setIsFavorite(false);
+    } else {
+      // Add to favorites
+      favorites.push(productId);
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      setIsFavorite(true);
+    }
+  };
+
   if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
-        <div className="spinner-border loading-spinner" role="status">
+        <div className="spinner-border text-muted" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
       </div>
@@ -104,199 +126,224 @@ export default function ProductPage() {
   }
 
   return (
-    <div className="container mt-4">
+    <div className="bg-white">
+      <div className="container py-4">
       {/* Breadcrumb */}
-      <nav aria-label="breadcrumb">
-        <ol className="breadcrumb">
-          <li className="breadcrumb-item">
-            <Link to="/">Home</Link>
-          </li>
-          {store && (
+        <nav aria-label="breadcrumb" className="mb-4">
+          <ol className="breadcrumb bg-transparent p-0">
             <li className="breadcrumb-item">
-              <Link to={`/${store.storeName}`}>{store.storeName}</Link>
+              <Link to="/" className="text-decoration-none text-muted">Home</Link>
+            </li>
+            {store && (
+              <li className="breadcrumb-item">
+                <Link to={`/${store.storeName}`} className="text-decoration-none text-muted">
+                  {store.storeName}
+                </Link>
             </li>
           )}
           <li className="breadcrumb-item active" aria-current="page">
-            {product.productName}
+              <span className="text-dark">{product.productName}</span>
           </li>
         </ol>
       </nav>
 
       <div className="row">
-        {/* Product Images */}
+          {/* Product Image Gallery */}
         <div className="col-lg-6 mb-4">
-          <div className="card">
-            <div className="card-body p-0">
+            <div className="position-relative">
+              {/* Main Image */}
+              <div className="mb-3">
               {product.images && product.images.length > 0 ? (
-                <div className="row g-2 p-3">
+                  <img
+                    src={`http://localhost:3031/productImages/${product.images[selectedImage]}`}
+                    alt={product.productName}
+                    className="img-fluid w-100"
+                    style={{ 
+                      height: '500px', 
+                      objectFit: 'cover',
+                      border: '1px solid #e9ecef'
+                    }}
+                  />
+                ) : (
+                  <div className="d-flex align-items-center justify-content-center bg-light" 
+                       style={{ height: '500px' }}>
+                    <div className="text-center">
+                      <i className="fas fa-image fa-3x text-muted mb-3"></i>
+                      <p className="text-muted">No images available</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Thumbnail Images */}
+              {product.images && product.images.length > 1 && (
+                <div className="row g-2">
                   {product.images.map((img, i) => (
-                    <div key={i} className="col-6">
+                    <div key={i} className="col-3">
                       <img
                         src={`http://localhost:3031/productImages/${img}`}
                         alt={`${product.productName} ${i + 1}`}
-                        className="img-fluid rounded"
-                        style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                        className={`img-fluid cursor-pointer ${selectedImage === i ? 'border border-dark' : 'border'}`}
+                        style={{ 
+                          height: '80px', 
+                          objectFit: 'cover',
+                          cursor: 'pointer'
+                        }}
+                        onClick={() => setSelectedImage(i)}
                       />
                     </div>
                   ))}
                 </div>
-              ) : (
-                <div className="text-center py-5">
-                  <i className="fas fa-image fa-3x text-muted"></i>
-                  <p className="text-muted mt-2">No images available</p>
-                </div>
               )}
-            </div>
           </div>
         </div>
 
-        {/* Product Details */}
+          {/* Product Information */}
         <div className="col-lg-6">
-          <div className="card">
-            <div className="card-body">
-              <h1 className="card-title mb-3">{product.productName}</h1>
+            <div className="ps-lg-4">
+              {/* Product Title */}
+              <h1 className="fw-light mb-3" style={{ fontSize: '1.8rem', color: '#333' }}>
+                {product.productName}
+              </h1>
               
-              <div className="mb-3">
-                <span className="h3 text-primary">Rs. {product.price}</span>
+              {/* Pricing */}
+              <div className="mb-4">
+                <span className="h3 fw-bold" style={{ color: '#333' }}>
+                  Rs. {product.price}
+                </span>
               </div>
 
+              {/* Product Description */}
               {product.description && (
                 <div className="mb-4">
-                  <h5>Description</h5>
-                  <p className="text-muted">{product.description}</p>
+                  <h6 className="fw-normal mb-2" style={{ color: '#333' }}>Description</h6>
+                  <p className="text-muted" style={{ lineHeight: '1.6' }}>
+                    {product.description}
+                  </p>
                 </div>
               )}
 
+              {/* What's Included */}
               {product.includes && product.includes.length > 0 && (
                 <div className="mb-4">
-                  <h5>What's Included</h5>
+                  <h6 className="fw-normal mb-2" style={{ color: '#333' }}>What's Included</h6>
                   <ul className="list-unstyled">
                     {product.includes.map((inc, i) => (
                       <li key={i} className="mb-2">
                         <i className="fas fa-check text-success me-2"></i>
-                        {inc}
+                        <span className="text-muted">{inc}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
 
-              {/* Order Form */}
-              <div className="card bg-light">
-                <div className="card-header">
-                  <h5 className="mb-0">
-                    <i className="fas fa-shopping-cart me-2"></i>
-                    Place Order
-                  </h5>
+              {/* Quantity */}
+              <div className="mb-4">
+                <h6 className="fw-normal mb-2" style={{ color: '#333' }}>Quantity</h6>
+                <div className="d-flex align-items-center gap-3">
+                  <div className="d-flex align-items-center border" style={{ width: 'fit-content' }}>
+                    <button
+                      className="btn btn-outline-dark"
+                      style={{ borderRadius: '0', border: 'none' }}
+                      onClick={() => setQty(Math.max(1, qty - 1))}
+                    >
+                      <i className="fas fa-minus" style={{ fontSize: '12px' }}></i>
+                    </button>
+                    <span className="px-3" style={{ minWidth: '50px', textAlign: 'center' }}>
+                      {qty}
+                    </span>
+                    <button
+                      className="btn btn-outline-dark"
+                      style={{ borderRadius: '0', border: 'none' }}
+                      onClick={() => setQty(qty + 1)}
+                    >
+                      <i className="fas fa-plus" style={{ fontSize: '12px' }}></i>
+                    </button>
+                  </div>
+                  <small className="text-muted">Total: Rs. {product.price * qty}</small>
                 </div>
-                <div className="card-body">
+              </div>
+
+              {/* Action Buttons */}
+              <div className="d-flex gap-3 mb-4">
+                <button 
+                  className={`btn ${isFavorite ? 'btn-danger' : 'btn-outline-dark'}`}
+                  style={{ borderRadius: '0' }}
+                  onClick={handleFavorite}
+                >
+                  <i className={`fas fa-heart ${isFavorite ? 'text-white' : ''}`}></i>
+                  <span className="ms-2">{isFavorite ? 'Favorited' : 'Add to Favorites'}</span>
+                </button>
+              </div>
+
+              {/* Order Form */}
+              <div className="border-top pt-4">
+                <h6 className="fw-normal mb-3" style={{ color: '#333' }}>Place Order</h6>
+                
                   {message && (
-                    <div className={`alert ${message.includes('successfully') ? 'alert-success' : 'alert-danger'}`} role="alert">
+                  <div className={`alert ${message.includes('successfully') ? 'alert-success' : 'alert-danger'} mb-3`} role="alert">
                       <i className={`fas ${message.includes('successfully') ? 'fa-check-circle' : 'fa-exclamation-triangle'} me-2`}></i>
                       {message}
                     </div>
                   )}
 
                   <form onSubmit={handleOrder}>
-                    <div className="row">
-                      <div className="col-md-6 mb-3">
-                        <label htmlFor="quantity" className="form-label">
-                          <i className="fas fa-hashtag me-2"></i>
-                          Quantity
-                        </label>
-                        <input
-                          type="number"
-                          className="form-control"
-                          id="quantity"
-                          min="1"
-                          value={qty}
-                          onChange={e => setQty(parseInt(e.target.value))}
-                          required
-                          disabled={orderLoading}
-                        />
-                      </div>
-                      <div className="col-md-6 mb-3">
-                        <label className="form-label">
-                          <i className="fas fa-calculator me-2"></i>
-                          Total
-                        </label>
-                        <div className="form-control-plaintext">
-                          Rs. {product.price * qty}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="row">
-                      <div className="col-md-6 mb-3">
-                        <label htmlFor="customerName" className="form-label">
-                          <i className="fas fa-user me-2"></i>
-                          Your Name
-                        </label>
+                  <div className="row g-3">
+                    <div className="col-md-6">
                         <input
                           type="text"
                           className="form-control"
-                          id="customerName"
+                        placeholder="Your Name"
                           value={customerName}
                           onChange={e => setCustomerName(e.target.value)}
                           required
                           disabled={orderLoading}
+                        style={{ borderRadius: '0' }}
                         />
                       </div>
-                      <div className="col-md-6 mb-3">
-                        <label htmlFor="customerEmail" className="form-label">
-                          <i className="fas fa-envelope me-2"></i>
-                          Your Email
-                        </label>
+                    <div className="col-md-6">
                         <input
                           type="email"
                           className="form-control"
-                          id="customerEmail"
+                        placeholder="Your Email"
                           value={customerEmail}
                           onChange={e => setCustomerEmail(e.target.value)}
                           required
                           disabled={orderLoading}
+                        style={{ borderRadius: '0' }}
                         />
-                      </div>
                     </div>
-
-                    <div className="row">
-                      <div className="col-md-6 mb-3">
-                        <label htmlFor="customerPhone" className="form-label">
-                          <i className="fas fa-phone me-2"></i>
-                          Your Phone
-                        </label>
+                    <div className="col-md-6">
                         <input
                           type="tel"
                           className="form-control"
-                          id="customerPhone"
+                        placeholder="Your Phone"
                           value={customerPhone}
                           onChange={e => setCustomerPhone(e.target.value)}
                           required
                           disabled={orderLoading}
+                        style={{ borderRadius: '0' }}
                         />
                       </div>
-                      <div className="col-md-6 mb-3">
-                        <label htmlFor="customerAddress" className="form-label">
-                          <i className="fas fa-map-marker-alt me-2"></i>
-                          Your Address
-                        </label>
+                    <div className="col-md-6">
                         <textarea
                           className="form-control"
-                          id="customerAddress"
-                          rows="2"
+                        placeholder="Your Address"
+                        rows="1"
                           value={customerAddress}
                           onChange={e => setCustomerAddress(e.target.value)}
                           required
                           disabled={orderLoading}
+                        style={{ borderRadius: '0' }}
                         ></textarea>
-                      </div>
                     </div>
-
-                    <div className="d-grid">
+                    <div className="col-12">
                       <button 
                         type="submit" 
-                        className="btn btn-primary btn-lg"
+                        className="btn btn-dark w-100"
                         disabled={orderLoading}
+                        style={{ borderRadius: '0' }}
                       >
                         {orderLoading ? (
                           <>
@@ -311,52 +358,131 @@ export default function ProductPage() {
                         )}
                       </button>
                     </div>
+                    </div>
                   </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        {/* Store Information */}
+      {store && (
+          <div className="row mt-5">
+          <div className="col-12">
+              <div className="card border-0 shadow-sm" style={{ borderRadius: '0' }}>
+                <div className="card-body p-4">
+                <div className="row align-items-center">
+                  <div className="col-md-8">
+                      <div className="d-flex align-items-center mb-2">
+                        <h6 className="fw-normal mb-0 me-3" style={{ color: '#333' }}>
+                          {store.storeName}
+                        </h6>
+                        <span className="badge bg-success" style={{ fontSize: '0.7rem' }}>
+                          {store.status === 'active' ? 'Online' : 'Offline'}
+                        </span>
+                      </div>
+                      <div className="row text-muted" style={{ fontSize: '0.9rem' }}>
+                        <div className="col-md-6">
+                          <span>Location: {store.location}</span>
+                        </div>
+                        {store.email && (
+                          <div className="col-md-6">
+                            <span>Email: {store.email}</span>
+                          </div>
+                        )}
+                      </div>
+                    {store.description && (
+                        <p className="text-muted mt-2 mb-0" style={{ fontSize: '0.9rem' }}>
+                          {store.description}
+                        </p>
+                    )}
+                  </div>
+                  <div className="col-md-4 text-md-end">
+                    <Link 
+                      to={`/${store.storeName}`} 
+                        className="btn btn-dark"
+                        style={{ borderRadius: '0' }}
+                      >
+                        Visit Store
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Product Details */}
+        <div className="row mt-5">
+          <div className="col-12">
+            <div className="card border-0 shadow-sm" style={{ borderRadius: '0' }}>
+              <div className="card-header bg-white border-bottom p-0">
+                <ul className="nav nav-tabs border-0" role="tablist">
+                  <li className="nav-item" role="presentation">
+                    <button className="nav-link active border-0" style={{ borderRadius: '0' }}>
+                      Product Details
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <div className="card-body p-4">
+                <div className="row">
+                  <div className="col-md-8">
+                    <h6 className="fw-normal mb-3" style={{ color: '#333' }}>Product Information</h6>
+                    
+                    <div className="row g-4">
+                      <div className="col-md-6">
+                        <h6 className="fw-normal mb-2" style={{ color: '#333' }}>Product Name</h6>
+                        <p className="text-muted small">{product.productName}</p>
+                      </div>
+                      <div className="col-md-6">
+                        <h6 className="fw-normal mb-2" style={{ color: '#333' }}>Price</h6>
+                        <p className="text-muted small">Rs. {product.price}</p>
+                      </div>
+                      {product.description && (
+                        <div className="col-md-12">
+                          <h6 className="fw-normal mb-2" style={{ color: '#333' }}>Description</h6>
+                          <p className="text-muted small">{product.description}</p>
+                        </div>
+                      )}
+                      {product.includes && product.includes.length > 0 && (
+                        <div className="col-md-12">
+                          <h6 className="fw-normal mb-2" style={{ color: '#333' }}>What's Included</h6>
+                          <ul className="list-unstyled text-muted small">
+                            {product.includes.map((inc, i) => (
+                              <li key={i}>• {inc}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {store && (
+                        <div className="col-md-6">
+                          <h6 className="fw-normal mb-2" style={{ color: '#333' }}>Store</h6>
+                          <p className="text-muted small">{store.storeName}</p>
+                        </div>
+                      )}
+                      {store && store.location && (
+                        <div className="col-md-6">
+                          <h6 className="fw-normal mb-2" style={{ color: '#333' }}>Location</h6>
+                          <p className="text-muted small">{store.location}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="col-md-4">
+                    <div className="text-end">
+                      <Link to="#" className="text-decoration-none text-muted small">
+                        Report Product
+                    </Link>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Store Info */}
-      {store && (
-        <div className="row mt-4">
-          <div className="col-12">
-            <div className="card">
-              <div className="card-header">
-                <h5 className="mb-0">
-                  <i className="fas fa-store me-2"></i>
-                  Store Information
-                </h5>
-              </div>
-              <div className="card-body">
-                <div className="row align-items-center">
-                  <div className="col-md-8">
-                    <h6>{store.storeName}</h6>
-                    <p className="text-muted mb-0">
-                      <i className="fas fa-map-marker-alt me-2"></i>
-                      {store.location}
-                    </p>
-                    {store.description && (
-                      <p className="text-muted mb-0 mt-2">{store.description}</p>
-                    )}
-                  </div>
-                  <div className="col-md-4 text-md-end">
-                    <Link 
-                      to={`/${store.storeName}`} 
-                      className="btn btn-outline-primary"
-                    >
-                      <i className="fas fa-store me-2"></i>
-                      View Store
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

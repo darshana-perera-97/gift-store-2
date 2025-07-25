@@ -34,6 +34,17 @@ import StoreAdminRoute from "./components/StoreAdminRoute";
 import StoreManagement from "./pages/StoreManagement";
 import EditProduct from "./pages/EditProduct";
 
+// --- Store Request ---
+import StoreRequest from "./pages/StoreRequest";
+import StoreRequestSuccess from "./pages/StoreRequestSuccess";
+
+// --- Store Settings ---
+import StoreSettings from "./pages/StoreSettings";
+
+// --- Public Pages ---
+import AllStores from "./pages/AllStores";
+import AllProducts from "./pages/AllProducts";
+
 function App() {
   return (
     <AuthProvider>
@@ -103,6 +114,26 @@ function App() {
                 path="/:storeName/edit-product/:productId"
                 element={<EditProduct />}
               />
+
+              {/* 08. Store Request - URL: /storeRequest */}
+              <Route path="/storeRequest" element={<StoreRequest />} />
+              <Route path="/storeRequest/success" element={<StoreRequestSuccess />} />
+
+              {/* 09. Store Settings - URL: /[storeName]/admin/settings */}
+              <Route
+                path="/:storeName/admin/settings"
+                element={
+                  <StoreAdminRoute>
+                    <StoreSettings />
+                  </StoreAdminRoute>
+                }
+              />
+
+              {/* 10. All Stores - URL: /allStores */}
+              <Route path="/allStores" element={<AllStores />} />
+
+              {/* 11. All Products - URL: /allProducts */}
+              <Route path="/allProducts" element={<AllProducts />} />
 
               {/* Fallback: redirect unknown URLs to home */}
               <Route path="*" element={<Navigate to="/" replace />} />

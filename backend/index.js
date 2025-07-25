@@ -396,6 +396,207 @@ app.post("/updateProduct", uploadProd.array('images', 5), (req, res) => {
   }
 });
 
+// --- STORE REQUEST: SEND EMAIL ---
+// POST /storeRequest
+// FormData: { storeName, ownerName, email, phone, tp, location, password, status, businessType, description, website, socialMedia, yearsInBusiness, products, targetAudience, reasonToJoin, propic, backgroundImage }
+app.post("/storeRequest", uploadStore.fields([
+  { name: "propic", maxCount: 1 },
+  { name: "backgroundImage", maxCount: 1 },
+]), async (req, res) => {
+  const {
+    storeName,
+    ownerName,
+    email,
+    phone,
+    tp,
+    location,
+    businessType,
+    description,
+    website,
+    socialMedia,
+    yearsInBusiness,
+    products,
+    targetAudience,
+    reasonToJoin
+  } = req.body;
+
+  if (!storeName || !ownerName || !email || !phone || !tp || !location || !businessType || !description || !reasonToJoin) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  // Handle file uploads
+  const propic = req.files.propic?.[0]?.filename || "";
+  const backgroundImage = req.files.backgroundImage?.[0]?.filename || "";
+
+  // Nodemailer setup using .env vars
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT),
+    secure: false, // Gmail on 587 uses STARTTLS
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  const mailOpts = {
+    from: `"GiftStore Store Request" <${process.env.SMTP_USER}>`,
+    to: "ds.perera.1997@gmail.com",
+    subject: `Store Request - ${storeName}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #333; border-bottom: 2px solid #333; padding-bottom: 10px;">
+          🏪 New Store Request
+        </h2>
+        
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #333; margin-top: 0;">Store Information</h3>
+          <p><strong>Store Name:</strong> ${storeName}</p>
+          <p><strong>Owner Name:</strong> ${ownerName}</p>
+          <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+          <p><strong>Phone:</strong> <a href="tel:${phone}">${phone}</a></p>
+          <p><strong>Telephone:</strong> <a href="tel:${tp}">${tp}</a></p>
+          <p><strong>Location:</strong> ${location}</p>
+          <p><strong>Business Type:</strong> ${businessType}</p>
+        </div>
+        
+        <div style="background: #e8f5e8; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #333; margin-top: 0;">Business Details</h3>
+          <p><strong>Description:</strong> ${description}</p>
+          ${website ? `<p><strong>Website:</strong> <a href="${website}" target="_blank">${website}</a></p>` : ''}
+          ${socialMedia ? `<p><strong>Social Media:</strong> ${socialMedia}</p>` : ''}
+          ${yearsInBusiness ? `<p><strong>Years in Business:</strong> ${yearsInBusiness}</p>` : ''}
+          ${products ? `<p><strong>Products/Services:</strong> ${products}</p>` : ''}
+          ${targetAudience ? `<p><strong>Target Audience:</strong> ${targetAudience}</p>` : ''}
+        </div>
+        
+        <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #333; margin-top: 0;">Reason to Join</h3>
+          <p>${reasonToJoin}</p>
+        </div>
+        
+        ${propic || backgroundImage ? `
+        <div style="background: #f0f8ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #333; margin-top: 0;">Uploaded Images</h3>
+          ${propic ? `<p><strong>Profile Picture:</strong> ${propic}</p>` : ''}
+          ${backgroundImage ? `<p><strong>Background Image:</strong> ${backgroundImage}</p>` : ''}
+        </div>
+        ` : ''}
+        
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+          <p style="color: #666; font-size: 14px;">
+            This store request was submitted through GiftStore platform.<br>
+            Submitted on: ${new Date().toLocaleString()}
+          </p>
+        </div>
+      </div>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOpts);
+    res.json({ success: true, message: "Store request sent successfully. We will contact you soon." });
+  } catch (err) {
+    console.error("Email send error:", err);
+    res.status(500).json({ error: "Failed to send store request email" });
+  }
+});
+
+// --- STORE SETTINGS: UPDATE STORE ---
+// POST /updateStore/:storeId
+// FormData: { storeName, location, tp, description, propic, backgroundImage, emailNotifications, orderNotifications, marketingNotifications }
+app.post("/updateStore/:storeId", uploadStore.fields([
+  { name: "propic", maxCount: 1 },
+  { name: "backgroundImage", maxCount: 1 },
+]), async (req, res) => {
+  const { storeId } = req.params;
+  const {
+    storeName,
+    location,
+    tp,
+    description,
+    emailNotifications,
+    orderNotifications,
+    marketingNotifications
+  } = req.body;
+
+  if (!storeName || !location || !tp) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  try {
+    const stores = readJSON(STORES_FILE);
+    const storeIndex = stores.findIndex(s => s.storeId === storeId);
+    
+    if (storeIndex === -1) {
+      return res.status(404).json({ error: "Store not found" });
+    }
+
+    // Handle file uploads
+    const propic = req.files.propic?.[0]?.filename || stores[storeIndex].propic;
+    const backgroundImage = req.files.backgroundImage?.[0]?.filename || stores[storeIndex].backgroundImage;
+
+    // Update store data
+    stores[storeIndex] = {
+      ...stores[storeIndex],
+      storeName,
+      location,
+      tp,
+      description: description || '',
+      propic,
+      backgroundImage,
+      emailNotifications: emailNotifications === 'true',
+      orderNotifications: orderNotifications === 'true',
+      marketingNotifications: marketingNotifications === 'true'
+    };
+
+    writeJSON(STORES_FILE, stores);
+    res.json({ success: true, message: "Store updated successfully" });
+  } catch (err) {
+    console.error("Error updating store:", err);
+    res.status(500).json({ error: "Failed to update store" });
+  }
+});
+
+// --- STORE SETTINGS: UPDATE PASSWORD ---
+// POST /updateStorePassword/:storeId
+// JSON body: { currentPassword, newPassword }
+app.post("/updateStorePassword/:storeId", async (req, res) => {
+  const { storeId } = req.params;
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ error: "Current password and new password are required" });
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({ error: "New password must be at least 6 characters long" });
+  }
+
+  try {
+    const stores = readJSON(STORES_FILE);
+    const storeIndex = stores.findIndex(s => s.storeId === storeId);
+    
+    if (storeIndex === -1) {
+      return res.status(404).json({ error: "Store not found" });
+    }
+
+    // Verify current password
+    if (stores[storeIndex].password !== currentPassword) {
+      return res.status(400).json({ error: "Current password is incorrect" });
+    }
+
+    // Update password
+    stores[storeIndex].password = newPassword;
+    writeJSON(STORES_FILE, stores);
+    
+    res.json({ success: true, message: "Password updated successfully" });
+  } catch (err) {
+    console.error("Error updating password:", err);
+    res.status(500).json({ error: "Failed to update password" });
+  }
+});
+
 // --- START SERVER ---
 const PORT = process.env.PORT || 3031;
 app.listen(PORT, () => {

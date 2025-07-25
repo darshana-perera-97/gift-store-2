@@ -75,30 +75,36 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="admin-page">
+    <div className="bg-white">
       {/* Hero Section with Login */}
-      <section className="hero-section">
+      <section className="bg-light py-5 border-bottom">
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-6">
-              <h1 className="display-4 fw-bold mb-4">
+              <h1 className="fw-light mb-4" style={{ fontSize: '3rem', color: '#333' }}>
                 GiftStore Admin
               </h1>
-              <p className="lead mb-4">
-                Welcome to the GiftStore administration panel. Manage stores, products, and monitor your gift marketplace.
+              <p className="text-muted mb-4" style={{ fontSize: '1.1rem', lineHeight: '1.6' }}>
+                Welcome to the GiftStore administration panel. Manage stores, products, and monitor your gift marketplace with powerful tools and insights.
               </p>
               
               {!isAdmin ? (
-                <div className="card shadow-lg border-0">
-                  <div className="card-header bg-primary text-white text-center py-3">
-                    <h4 className="mb-0">
-                      <i className="fas fa-user-shield me-2"></i>
-                      Admin Login
-                    </h4>
+                <div className="card border-0 shadow-sm" style={{ borderRadius: '0', maxWidth: '400px' }}>
+                  <div className="card-header bg-white border-bottom p-4" style={{ borderRadius: '0' }}>
+                    <div className="text-center">
+                      <div className="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                           style={{ width: '60px', height: '60px' }}>
+                        <i className="fas fa-user-shield text-primary" style={{ fontSize: '1.5rem' }}></i>
+                      </div>
+                      <h4 className="fw-light mb-0" style={{ color: '#333' }}>
+                        Admin Login
+                      </h4>
+                      <p className="text-muted small mb-0 mt-2">Enter your credentials to access the admin panel</p>
+                    </div>
                   </div>
                   <div className="card-body p-4">
                     {error && (
-                      <div className="alert alert-danger" role="alert">
+                      <div className="alert alert-danger border-0 mb-4" role="alert" style={{ borderRadius: '0' }}>
                         <i className="fas fa-exclamation-triangle me-2"></i>
                         {error}
                       </div>
@@ -106,71 +112,88 @@ export default function AdminPage() {
                     
                     <form onSubmit={handleLogin}>
                       <div className="mb-3">
-                        <label htmlFor="username" className="form-label">
-                          <i className="fas fa-user me-2"></i>
+                        <label htmlFor="username" className="form-label fw-normal" style={{ color: '#333' }}>
                           Username
                         </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="username"
-                          value={username}
-                          onChange={(e) => setUsername(e.target.value)}
-                          required
-                          disabled={loginLoading}
-                        />
+                        <div className="input-group">
+                          <span className="input-group-text bg-white border-end-0">
+                            <i className="fas fa-user text-muted"></i>
+                          </span>
+                          <input
+                            type="text"
+                            className="form-control border-start-0"
+                            id="username"
+                            placeholder="Enter username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                            disabled={loginLoading}
+                            style={{ borderRadius: '0' }}
+                          />
+                        </div>
                       </div>
                       
                       <div className="mb-4">
-                        <label htmlFor="password" className="form-label">
-                          <i className="fas fa-lock me-2"></i>
+                        <label htmlFor="password" className="form-label fw-normal" style={{ color: '#333' }}>
                           Password
                         </label>
-                        <input
-                          type="password"
-                          className="form-control"
-                          id="password"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          required
-                          disabled={loginLoading}
-                        />
+                        <div className="input-group">
+                          <span className="input-group-text bg-white border-end-0">
+                            <i className="fas fa-lock text-muted"></i>
+                          </span>
+                          <input
+                            type="password"
+                            className="form-control border-start-0"
+                            id="password"
+                            placeholder="Enter password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            disabled={loginLoading}
+                            style={{ borderRadius: '0' }}
+                          />
+                        </div>
                       </div>
                       
                       <button 
                         type="submit" 
-                        className="btn btn-primary w-100"
+                        className="btn btn-dark w-100"
                         disabled={loginLoading}
+                        style={{ borderRadius: '0', padding: '0.75rem' }}
                       >
                         {loginLoading ? (
                           <>
                             <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            Logging in...
+                            Signing In...
                           </>
                         ) : (
                           <>
                             <i className="fas fa-sign-in-alt me-2"></i>
-                            Login
+                            Sign In
                           </>
                         )}
                       </button>
                     </form>
                     
-                    <div className="text-center mt-3">
-                      <small className="text-muted">
-                        <i className="fas fa-info-circle me-1"></i>
-                        Demo credentials: admin / admin
-                      </small>
+                    <div className="text-center mt-4">
+                      <div className="bg-light p-3" style={{ borderRadius: '0' }}>
+                        <small className="text-muted">
+                          <i className="fas fa-info-circle me-2"></i>
+                          <strong>Demo Credentials:</strong><br/>
+                          Username: <code>admin</code><br/>
+                          Password: <code>admin</code>
+                        </small>
+                      </div>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div className="d-flex gap-3">
-                  <Link to="/Admin/stores" className="btn btn-light btn-lg">
+                  <Link to="/Admin/stores" className="btn btn-dark btn-lg" style={{ borderRadius: '0' }}>
                     <i className="fas fa-store me-2"></i>
                     Manage Stores
                   </Link>
-                  <Link to="/Admin/add-store" className="btn btn-outline-light btn-lg">
+                  <Link to="/Admin/add-store" className="btn btn-outline-dark btn-lg" style={{ borderRadius: '0' }}>
                     <i className="fas fa-plus me-2"></i>
                     Add Store
                   </Link>
@@ -179,7 +202,12 @@ export default function AdminPage() {
             </div>
             <div className="col-lg-6">
               <div className="text-center">
-                <i className="fas fa-gift" style={{ fontSize: '8rem', opacity: 0.3 }}></i>
+                <div className="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-4"
+                     style={{ width: '200px', height: '200px' }}>
+                  <i className="fas fa-gift text-muted" style={{ fontSize: '4rem' }}></i>
+                </div>
+                <h5 className="fw-light mb-3" style={{ color: '#333' }}>Administration Panel</h5>
+                <p className="text-muted">Manage your marketplace with powerful admin tools</p>
               </div>
             </div>
           </div>
@@ -187,45 +215,51 @@ export default function AdminPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-5 bg-light">
+      <section className="py-5 bg-white">
         <div className="container">
-          <h2 className="section-title">Admin Features</h2>
+          <div className="text-center mb-5">
+            <h2 className="fw-light mb-3" style={{ fontSize: '2.5rem', color: '#333' }}>Admin Features</h2>
+            <p className="text-muted lead fw-light">Powerful tools to manage your marketplace</p>
+          </div>
           <div className="row g-4">
             <div className="col-md-4">
-              <div className="card h-100 border-0 shadow-sm text-center">
+              <div className="card h-100 border-0 shadow-sm text-center" style={{ borderRadius: '0' }}>
                 <div className="card-body p-4">
-                  <div className="mb-3">
-                    <i className="fas fa-store fa-3x text-primary"></i>
+                  <div className="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                       style={{ width: '80px', height: '80px' }}>
+                    <i className="fas fa-store text-primary" style={{ fontSize: '2rem' }}></i>
                   </div>
-                  <h5 className="card-title">Store Management</h5>
-                  <p className="card-text">
-                    Add, edit, and manage all stores in the marketplace. Monitor store status and performance.
+                  <h5 className="fw-normal mb-3" style={{ color: '#333' }}>Store Management</h5>
+                  <p className="text-muted">
+                    Add, edit, and manage all stores in the marketplace. Monitor store status and performance with comprehensive tools.
                   </p>
                 </div>
               </div>
             </div>
             <div className="col-md-4">
-              <div className="card h-100 border-0 shadow-sm text-center">
+              <div className="card h-100 border-0 shadow-sm text-center" style={{ borderRadius: '0' }}>
                 <div className="card-body p-4">
-                  <div className="mb-3">
-                    <i className="fas fa-chart-line fa-3x text-primary"></i>
+                  <div className="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                       style={{ width: '80px', height: '80px' }}>
+                    <i className="fas fa-chart-line text-primary" style={{ fontSize: '2rem' }}></i>
                   </div>
-                  <h5 className="card-title">Analytics</h5>
-                  <p className="card-text">
-                    View detailed analytics and insights about store performance and customer engagement.
+                  <h5 className="fw-normal mb-3" style={{ color: '#333' }}>Analytics</h5>
+                  <p className="text-muted">
+                    View detailed analytics and insights about store performance and customer engagement with real-time data.
                   </p>
                 </div>
               </div>
             </div>
             <div className="col-md-4">
-              <div className="card h-100 border-0 shadow-sm text-center">
+              <div className="card h-100 border-0 shadow-sm text-center" style={{ borderRadius: '0' }}>
                 <div className="card-body p-4">
-                  <div className="mb-3">
-                    <i className="fas fa-cog fa-3x text-primary"></i>
+                  <div className="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                       style={{ width: '80px', height: '80px' }}>
+                    <i className="fas fa-cog text-primary" style={{ fontSize: '2rem' }}></i>
                   </div>
-                  <h5 className="card-title">System Control</h5>
-                  <p className="card-text">
-                    Control system settings, manage user permissions, and maintain platform security.
+                  <h5 className="fw-normal mb-3" style={{ color: '#333' }}>System Control</h5>
+                  <p className="text-muted">
+                    Control system settings, manage user permissions, and maintain platform security with advanced controls.
                   </p>
                 </div>
               </div>
@@ -235,9 +269,12 @@ export default function AdminPage() {
       </section>
 
       {/* Featured Products */}
-      <section className="py-5">
+      <section className="py-5 bg-light">
         <div className="container">
-          <h2 className="section-title">Featured Products</h2>
+          <div className="text-center mb-5">
+            <h2 className="fw-light mb-3" style={{ fontSize: '2.5rem', color: '#333' }}>Featured Products</h2>
+            <p className="text-muted lead fw-light">Discover amazing products from our marketplace</p>
+          </div>
           <div className="row g-4">
             {products.slice(0, 8).map(product => (
               <div key={product.productId} className="col-lg-3 col-md-4 col-sm-6">
@@ -245,21 +282,51 @@ export default function AdminPage() {
                   to={`/product/${product.productId}`}
                   className="text-decoration-none"
                 >
-                  <div className="card product-card h-100">
+                  <div className="card product-card h-100 border-0 shadow-sm" style={{ borderRadius: '0' }}>
                     {product.images[0] && (
-                      <img
-                        src={`http://localhost:3031/productImages/${product.images[0]}`}
-                        className="card-img-top"
-                        alt={product.productName}
-                        style={{ height: '200px', objectFit: 'cover' }}
-                      />
+                      <div className="position-relative">
+                        <img
+                          src={`http://localhost:3031/productImages/${product.images[0]}`}
+                          className="card-img-top"
+                          alt={product.productName}
+                          style={{ height: '250px', objectFit: 'cover' }}
+                        />
+                        <div className="position-absolute top-0 start-0 m-2">
+                          <span className="badge bg-primary" style={{ borderRadius: '0' }}>
+                            New Arrival
+                          </span>
+                        </div>
+                      </div>
                     )}
-                    <div className="card-body d-flex flex-column">
-                      <h5 className="card-title">{product.productName}</h5>
-                      <p className="card-text text-muted flex-grow-1">
-                        {product.description || 'Amazing product from our featured collection'}
+                    <div className="card-body d-flex flex-column p-4">
+                      <div className="mb-2">
+                        <small className="text-muted fw-light">Featured Product</small>
+                      </div>
+                      <h6 className="fw-normal mb-2" style={{ fontSize: '1rem', color: '#333' }}>
+                        {product.productName}
+                      </h6>
+                      <p className="text-muted flex-grow-1 small">
+                        {product.description ? 
+                          (product.description.length > 80 ? 
+                            product.description.substring(0, 80) + '...' : 
+                            product.description
+                          ) : 
+                          'Amazing product from our featured collection'
+                        }
                       </p>
-                      <div className="price">Rs. {product.price}</div>
+                      <div className="d-flex justify-content-between align-items-center mt-auto">
+                        <div className="h6 text-primary mb-0">
+                          Rs. {product.price?.toLocaleString()}
+                        </div>
+                        <Link 
+                          to={`/product/${product.productId}`}
+                          className="btn btn-outline-dark btn-sm"
+                          style={{ borderRadius: '0' }}
+                        >
+                          <i className="fas fa-eye me-1"></i>
+                          View
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </Link>
@@ -267,8 +334,9 @@ export default function AdminPage() {
             ))}
           </div>
           {products.length > 8 && (
-            <div className="text-center mt-4">
-              <Link to="/Admin/stores" className="btn btn-outline-primary btn-lg">
+            <div className="text-center mt-5">
+              <Link to="/allProducts" className="btn btn-dark btn-lg" style={{ borderRadius: '0' }}>
+                <i className="fas fa-box me-2"></i>
                 View All Products
               </Link>
             </div>
@@ -277,9 +345,12 @@ export default function AdminPage() {
       </section>
 
       {/* Stores Section */}
-      <section className="py-5 bg-light">
+      <section className="py-5 bg-white">
         <div className="container">
-          <h2 className="section-title">Active Stores</h2>
+          <div className="text-center mb-5">
+            <h2 className="fw-light mb-3" style={{ fontSize: '2.5rem', color: '#333' }}>Active Stores</h2>
+            <p className="text-muted lead fw-light">Manage and monitor your marketplace stores</p>
+          </div>
           <div className="row g-4">
             {stores.map(store => (
               <div key={store.storeId} className="col-lg-4 col-md-6">
@@ -287,24 +358,62 @@ export default function AdminPage() {
                   to={`/${store.storeName}`}
                   className="text-decoration-none"
                 >
-                  <div className="card store-card h-100">
-                    {store.propic && (
-                      <img
-                        src={`http://localhost:3031/storeAssets/${store.propic}`}
-                        className="card-img-top"
-                        alt={store.storeName}
-                        style={{ height: '200px', objectFit: 'cover' }}
-                      />
+                  <div className="card store-card h-100 border-0 shadow-sm" style={{ borderRadius: '0' }}>
+                    {store.backgroundImage && (
+                      <div className="position-relative">
+                        <img
+                          src={`http://localhost:3031/storeAssets/${store.backgroundImage}`}
+                          className="card-img-top"
+                          alt={store.storeName}
+                          style={{ height: '200px', objectFit: 'cover' }}
+                        />
+                        <div className="position-absolute top-0 start-0 m-3">
+                          <span className="badge bg-white text-dark" style={{ borderRadius: '0' }}>
+                            {store.location}
+                          </span>
+                        </div>
+                      </div>
                     )}
-                    <div className="card-body">
-                      <h5 className="card-title">{store.storeName}</h5>
-                      <p className="card-text text-muted">
-                        <i className="fas fa-map-marker-alt me-2"></i>
-                        {store.location}
-                      </p>
+                    <div className="card-body p-4">
+                      <div className="d-flex align-items-center mb-3">
+                        {store.propic && (
+                          <img
+                            src={`http://localhost:3031/storeAssets/${store.propic}`}
+                            alt={store.storeName}
+                            className="rounded-circle me-3"
+                            style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                          />
+                        )}
+                        <div className="flex-grow-1">
+                          <h5 className="fw-normal mb-1" style={{ color: '#333' }}>{store.storeName}</h5>
+                          <p className="text-muted small mb-0">
+                            <i className="fas fa-map-marker-alt me-1"></i>
+                            {store.location}
+                          </p>
+                        </div>
+                      </div>
                       {store.description && (
-                        <p className="card-text">{store.description}</p>
+                        <p className="text-muted small">
+                          {store.description.length > 100 ? 
+                            store.description.substring(0, 100) + '...' : 
+                            store.description
+                          }
+                        </p>
                       )}
+                      <div className="d-flex justify-content-between align-items-center mt-auto">
+                        <div className="text-muted small">
+                          <i className="fas fa-phone me-1"></i>
+                          {store.tp || 'No contact'}
+                        </div>
+                        <Link 
+                          to={`/${store.storeName}`}
+                          className="btn btn-outline-dark btn-sm"
+                          style={{ borderRadius: '0' }}
+                        >
+                          <i className="fas fa-external-link-alt me-1"></i>
+                          Visit Store
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </Link>
@@ -312,8 +421,8 @@ export default function AdminPage() {
             ))}
           </div>
           {stores.length > 0 && (
-            <div className="text-center mt-4">
-              <Link to="/Admin/stores" className="btn btn-primary btn-lg">
+            <div className="text-center mt-5">
+              <Link to="/Admin/stores" className="btn btn-dark btn-lg" style={{ borderRadius: '0' }}>
                 <i className="fas fa-store me-2"></i>
                 Manage All Stores
               </Link>
@@ -323,18 +432,18 @@ export default function AdminPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-5" style={{ background: 'linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%)' }}>
-        <div className="container text-center text-white">
-          <h2 className="mb-4">Ready to Manage Your Marketplace?</h2>
-          <p className="lead mb-4">
-            Take control of your gift store platform and help local businesses grow.
+      <section className="py-5 bg-light">
+        <div className="container text-center">
+          <h2 className="fw-light mb-4" style={{ color: '#333' }}>Ready to Manage Your Marketplace?</h2>
+          <p className="text-muted lead fw-light mb-4">
+            Take control of your gift store platform and help local businesses grow with powerful admin tools.
           </p>
           <div className="d-flex justify-content-center gap-3">
-            <Link to="/Admin/stores" className="btn btn-light btn-lg">
+            <Link to="/Admin/stores" className="btn btn-dark btn-lg" style={{ borderRadius: '0' }}>
               <i className="fas fa-store me-2"></i>
               Manage Stores
             </Link>
-            <Link to="/Admin/add-store" className="btn btn-outline-light btn-lg">
+            <Link to="/Admin/add-store" className="btn btn-outline-dark btn-lg" style={{ borderRadius: '0' }}>
               <i className="fas fa-plus me-2"></i>
               Add New Store
             </Link>
