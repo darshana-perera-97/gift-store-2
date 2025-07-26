@@ -16,11 +16,12 @@ app.use(express.json());
 const DATA_DIR = __dirname;
 const STORES_FILE = path.join(DATA_DIR, "stores.json");
 const PRODUCTS_FILE = path.join(DATA_DIR, "products.json");
+const ORDERS_FILE = path.join(DATA_DIR, "orders.json");
 const STORE_ASSETS = path.join(DATA_DIR, "storeAssets");
 const PRODUCT_IMAGES = path.join(DATA_DIR, "productImages");
 
 // Ensure data files & directories exist
-for (const file of [STORES_FILE, PRODUCTS_FILE]) {
+for (const file of [STORES_FILE, PRODUCTS_FILE, ORDERS_FILE]) {
   if (!fs.existsSync(file)) fs.writeFileSync(file, "[]", "utf8");
 }
 for (const dir of [STORE_ASSETS, PRODUCT_IMAGES]) {
@@ -222,6 +223,30 @@ app.post("/orderProduct", async (req, res) => {
   const store = stores.find((s) => s.storeId === product.storeId);
   if (!store) return res.status(404).json({ error: "Store not found" });
 
+  // Create order object
+  const orderId = `ord_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const order = {
+    orderId,
+    productId,
+    storeId: product.storeId,
+    productName: product.productName,
+    storeName: store.storeName,
+    quantity: parseInt(quantity),
+    totalAmount: parseFloat(totalAmount),
+    customerName,
+    customerEmail,
+    customerPhone,
+    customerAddress,
+    orderDate: new Date().toISOString(),
+    status: 'pending', // pending, confirmed, shipped, delivered, cancelled
+    storeEmail: store.email
+  };
+
+  // Save order to JSON file
+  const orders = readJSON(ORDERS_FILE);
+  orders.push(order);
+  writeJSON(ORDERS_FILE, orders);
+
   // Nodemailer setup using .env vars
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -245,6 +270,7 @@ app.post("/orderProduct", async (req, res) => {
         
         <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #333; margin-top: 0;">Order Details</h3>
+          <p><strong>Order ID:</strong> ${orderId}</p>
           <p><strong>Product:</strong> ${product.productName}</p>
           <p><strong>Quantity:</strong> ${quantity}</p>
           <p><strong>Total Amount:</strong> Rs. ${totalAmount}</p>
@@ -277,10 +303,68 @@ app.post("/orderProduct", async (req, res) => {
 
   try {
     await transporter.sendMail(mailOpts);
-    res.json({ success: true, message: "Order placed & email sent to store." });
+    res.json({ success: true, message: "Order placed & email sent to store.", orderId });
   } catch (err) {
     console.error("Email send error:", err);
     res.status(500).json({ error: "Failed to send email" });
+  }
+});
+
+// --- STORE ADMIN: ORDER MANAGEMENT ---
+
+// 8. Get orders for a specific store
+// GET /storeOrders/:storeId
+app.get("/storeOrders/:storeId", (req, res) => {
+  try {
+    const { storeId } = req.params;
+    const orders = readJSON(ORDERS_FILE);
+    const storeOrders = orders.filter(order => order.storeId === storeId);
+    
+    // Sort by order date (newest first)
+    storeOrders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+    
+    res.json(storeOrders);
+  } catch (err) {
+    console.error("Error reading orders:", err);
+    res.status(500).json({ error: "Could not load orders." });
+  }
+});
+
+// 9. Update order status
+// PUT /updateOrderStatus
+// JSON body: { orderId, status }
+app.put("/updateOrderStatus", (req, res) => {
+  try {
+    const { orderId, status } = req.body;
+    const orders = readJSON(ORDERS_FILE);
+    
+    const orderIndex = orders.findIndex(order => order.orderId === orderId);
+    if (orderIndex === -1) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+    
+    orders[orderIndex].status = status;
+    orders[orderIndex].updatedAt = new Date().toISOString();
+    
+    writeJSON(ORDERS_FILE, orders);
+    res.json({ success: true, message: "Order status updated successfully" });
+  } catch (err) {
+    console.error("Error updating order status:", err);
+    res.status(500).json({ error: "Could not update order status." });
+  }
+});
+
+// 10. Get all orders (for admin dashboard)
+// GET /allOrders
+app.get("/allOrders", (req, res) => {
+  try {
+    const orders = readJSON(ORDERS_FILE);
+    // Sort by order date (newest first)
+    orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+    res.json(orders);
+  } catch (err) {
+    console.error("Error reading orders:", err);
+    res.status(500).json({ error: "Could not load orders." });
   }
 });
 

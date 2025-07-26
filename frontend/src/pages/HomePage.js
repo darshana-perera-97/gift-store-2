@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../components/AuthProvider';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { buildApiUrl, buildAssetUrl } from '../config';
 
 export default function HomePage() {
   const { user } = useContext(AuthContext);
@@ -17,12 +18,12 @@ export default function HomePage() {
     const fetchData = async () => {
       try {
         // Fetch active stores
-        const storesResponse = await fetch('http://localhost:3031/viewStores');
+        const storesResponse = await fetch(buildApiUrl('/viewStores'));
         const storesData = await storesResponse.json();
         setStores(storesData.filter(s => s.status === 'active'));
 
         // Fetch all products
-        const productsResponse = await fetch('http://localhost:3031/viewProducts');
+        const productsResponse = await fetch(buildApiUrl('/viewProducts'));
         const productsData = await productsResponse.json();
         setProducts(productsData);
       } catch (error) {
@@ -81,7 +82,7 @@ export default function HomePage() {
                     }}>
                       Explore unique products from local stores and find the perfect gift for every occasion. From handmade crafts to premium items, discover treasures that tell a story.
                     </p>
-                    <Link to="/stores" className="btn btn-dark btn-lg" style={{ 
+                    <Link to="/allStores" className="btn btn-dark btn-lg" style={{ 
                       borderRadius: '0',
                       padding: '0.75rem 2rem',
                       fontSize: '1rem',
@@ -94,15 +95,15 @@ export default function HomePage() {
                 <div className="col-lg-6">
                   <div className="hero-image-container">
                     <img 
-                      src="https://images.unsplash.com/photo-1607082349566-187342175e2f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
-              alt="Gift Collection"
+                      src="https://img.freepik.com/free-vector/gift-boxes-collection_23-2148534847.jpg?w=800&t=st=1703123456~exp=1703124056~hmac=1234567890abcdef" 
+                      alt="Gift Collection"
                       className="img-fluid"
                       style={{ 
                         borderRadius: '0',
                         boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
                       }}
                       onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/800x600/f8f9fa/666666?text=Gift+Collection';
+                        e.target.src = 'https://img.freepik.com/free-vector/gift-boxes-collection_23-2148534847.jpg?w=800&t=st=1703123456~exp=1703124056~hmac=1234567890abcdef';
                       }}
                     />
                   </div>
@@ -130,7 +131,7 @@ export default function HomePage() {
                     }}>
                       Find amazing products from stores in your area and help local businesses grow. Every purchase supports your community and brings unique offerings to your doorstep.
                     </p>
-                    <Link to="/stores" className="btn btn-dark btn-lg" style={{ 
+                    <Link to="/allStores" className="btn btn-dark btn-lg" style={{ 
                       borderRadius: '0',
                       padding: '0.75rem 2rem',
                       fontSize: '1rem',
@@ -143,15 +144,15 @@ export default function HomePage() {
                 <div className="col-lg-6">
                   <div className="hero-image-container">
                     <img 
-                      src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
-              alt="Local Stores"
+                      src="https://img.freepik.com/free-vector/online-shopping-concept-illustration_114360-1081.jpg?w=800&t=st=1703123456~exp=1703124056~hmac=1234567890abcdef" 
+                      alt="Local Stores"
                       className="img-fluid"
                       style={{ 
                         borderRadius: '0',
                         boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
                       }}
                       onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/800x600/f8f9fa/666666?text=Local+Stores';
+                        e.target.src = 'https://img.freepik.com/free-vector/online-shopping-concept-illustration_114360-1081.jpg?w=800&t=st=1703123456~exp=1703124056~hmac=1234567890abcdef';
                       }}
                     />
                   </div>
@@ -179,7 +180,7 @@ export default function HomePage() {
                     }}>
                       Birthdays, anniversaries, and special moments - find the perfect gift for every celebration. Our curated collection ensures you'll always find something meaningful.
                     </p>
-                    <Link to="/stores" className="btn btn-dark btn-lg" style={{ 
+                    <Link to="/allStores" className="btn btn-dark btn-lg" style={{ 
                       borderRadius: '0',
                       padding: '0.75rem 2rem',
                       fontSize: '1rem',
@@ -192,15 +193,15 @@ export default function HomePage() {
                 <div className="col-lg-6">
                   <div className="hero-image-container">
                     <img 
-                      src="https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
-              alt="Special Occasions"
+                      src="https://img.freepik.com/free-vector/gift-shop-concept-illustration_114360-1082.jpg?w=800&t=st=1703123456~exp=1703124056~hmac=1234567890abcdef" 
+                      alt="Special Occasions"
                       className="img-fluid"
                       style={{ 
                         borderRadius: '0',
                         boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
                       }}
                       onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/800x600/f8f9fa/666666?text=Special+Occasions';
+                        e.target.src = 'https://img.freepik.com/free-vector/gift-shop-concept-illustration_114360-1082.jpg?w=800&t=st=1703123456~exp=1703124056~hmac=1234567890abcdef';
                       }}
                     />
                   </div>
@@ -323,7 +324,7 @@ export default function HomePage() {
                   <div className="card store-card h-100 border-0 shadow-sm" style={{ borderRadius: '0' }}>
                     {store.backgroundImage && (
                       <img
-                        src={`http://localhost:3031/storeAssets/${store.backgroundImage}`}
+                        src={buildAssetUrl('/storeAssets', store.backgroundImage)}
                         className="card-img-top"
                         alt={store.storeName}
                         style={{ height: '200px', objectFit: 'cover' }}
@@ -333,7 +334,7 @@ export default function HomePage() {
                       <div className="d-flex align-items-center mb-3">
                         {store.propic && (
                           <img
-                            src={`http://localhost:3031/storeAssets/${store.propic}`}
+                            src={buildAssetUrl('/storeAssets', store.propic)}
                             alt={store.storeName}
                             className="rounded-circle me-3"
                             style={{ width: '50px', height: '50px', objectFit: 'cover' }}
@@ -400,24 +401,26 @@ export default function HomePage() {
                   to={`/product/${product.productId}`}
                   className="text-decoration-none"
                 >
-                  <div className="card product-card h-100 border-0 shadow-sm" 
+                  <div className="card product-card h-100 border-0" 
                        style={{ 
                          borderRadius: '0',
-                         transition: 'all 0.2s ease',
-                         overflow: 'hidden'
+                         transition: 'all 0.3s ease',
+                         overflow: 'hidden',
+                         boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+                         border: '1px solid rgba(0,0,0,0.05)'
                        }}
                        onMouseEnter={(e) => {
-                         e.currentTarget.style.transform = 'translateY(-2px)';
-                         e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                         e.currentTarget.style.transform = 'translateY(-4px)';
+                         e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.15)';
                        }}
                        onMouseLeave={(e) => {
                          e.currentTarget.style.transform = 'translateY(0)';
-                         e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+                         e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.12)';
                        }}>
                     <div className="position-relative">
                     {product.images[0] && (
                       <img
-                        src={`http://localhost:3031/productImages/${product.images[0]}`}
+                        src={buildAssetUrl('/productImages', product.images[0])}
                         className="card-img-top"
                         alt={product.productName}
                           style={{ 
@@ -469,7 +472,6 @@ export default function HomePage() {
                         <div>
                           <span className="fw-bold" style={{ color: '#333' }}>Rs. {product.price}</span>
                         </div>
-                        <small className="text-muted">12 items left</small>
                       </div>
                     </div>
                   </div>

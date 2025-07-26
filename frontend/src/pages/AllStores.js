@@ -143,11 +143,19 @@ export default function AllStores() {
           <div className="row g-4">
             {filteredStores.map(store => (
               <div key={store.storeId} className="col-lg-4 col-md-6">
-                <div className="card h-100 border-0 shadow-sm store-card" style={{ borderRadius: '0' }}>
-                  {store.backgroundImage && (
-                    <div className="position-relative">
+                <Link 
+                  to={`/${store.storeName}`}
+                  className="text-decoration-none"
+                >
+                  <div className="card store-card h-100 border-0" 
+                       style={{ 
+                         borderRadius: '0',
+                         boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                         transition: 'all 0.3s ease'
+                       }}>
+                    {store.backgroundImage && (
                       <img
-                        src={`http://localhost:3031/storeImages/${store.backgroundImage}`}
+                        src={`http://localhost:3031/storeAssets/${store.backgroundImage}`}
                         className="card-img-top"
                         alt={store.storeName}
                         style={{ height: '200px', objectFit: 'cover' }}
@@ -155,57 +163,46 @@ export default function AllStores() {
                           e.target.style.display = 'none';
                         }}
                       />
-                      <div className="position-absolute top-0 start-0 m-3">
-                        <span className="badge bg-white text-dark" style={{ borderRadius: '0' }}>
-                          {store.location}
-                        </span>
+                    )}
+                    <div className="card-body p-4">
+                      <div className="d-flex align-items-center mb-3">
+                        {store.propic && (
+                          <img
+                            src={`http://localhost:3031/storeAssets/${store.propic}`}
+                            alt={store.storeName}
+                            className="rounded-circle me-3"
+                            style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                            }}
+                          />
+                        )}
+                        <div>
+                          <h5 className="card-title mb-1 fw-normal" style={{ color: '#333' }}>{store.storeName}</h5>
+                          <div className="text-warning">
+                            <i className="fas fa-star"></i>
+                            <i className="fas fa-star"></i>
+                            <i className="fas fa-star"></i>
+                            <i className="fas fa-star"></i>
+                            <i className="fas fa-star"></i>
+                            <span className="text-muted ms-2">(4.5)</span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                  <div className="card-body d-flex flex-column">
-                    <div className="d-flex align-items-center mb-3">
-                      {store.propic && (
-                        <img
-                          src={`http://localhost:3031/storeImages/${store.propic}`}
-                          className="rounded-circle me-3"
-                          alt={store.storeName}
-                          style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                          }}
-                        />
+                      <p className="card-text text-muted mb-3">
+                        <i className="fas fa-map-marker-alt me-2"></i>
+                        {store.location}
+                      </p>
+                      {store.description && (
+                        <p className="card-text text-muted mb-3">{store.description}</p>
                       )}
-                      <div className="flex-grow-1">
-                        <h5 className="card-title mb-1" style={{ color: '#333' }}>
-                          {store.storeName}
-                        </h5>
-                        <p className="text-muted small mb-0">
-                          <i className="fas fa-map-marker-alt me-1"></i>
-                          {store.location}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <p className="card-text text-muted flex-grow-1">
-                      {store.description || 'No description available'}
-                    </p>
-                    
-                    <div className="d-flex justify-content-between align-items-center mt-auto">
-                      <div className="text-muted small">
-                        <i className="fas fa-phone me-1"></i>
-                        {store.tp || 'No contact'}
-                      </div>
-                      <Link 
-                        to={`/${store.storeName}`}
-                        className="btn btn-outline-dark btn-sm"
-                        style={{ borderRadius: '0' }}
-                      >
-                        <i className="fas fa-external-link-alt me-1"></i>
-                        Visit Store
-                      </Link>
+                      <button className="btn btn-outline-dark w-100" style={{ borderRadius: '0' }}>
+                        <i className="fas fa-store me-2"></i>
+                        View Store
+                      </button>
                     </div>
                   </div>
-                </div>
+                </Link>
               </div>
             ))}
           </div>
