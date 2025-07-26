@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../components/AuthProvider';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { buildApiUrl, getProductImageUrl, getStoreImageUrl } from '../apiConfig';
 
 export default function AdminPage() {
   const { user, login } = useContext(AuthContext);
@@ -24,12 +25,12 @@ export default function AdminPage() {
     const fetchData = async () => {
       try {
         // Fetch active stores
-        const storesResponse = await fetch('http://localhost:3031/viewStores');
+        const storesResponse = await fetch(buildApiUrl('/viewStores'));
         const storesData = await storesResponse.json();
         setStores(storesData.filter(s => s.status === 'active'));
 
         // Fetch all products
-        const productsResponse = await fetch('http://localhost:3031/viewProducts');
+        const productsResponse = await fetch(buildApiUrl('/viewProducts'));
         const productsData = await productsResponse.json();
         setProducts(productsData);
       } catch (error) {
@@ -286,7 +287,7 @@ export default function AdminPage() {
                     {product.images[0] && (
                       <div className="position-relative">
                         <img
-                          src={`http://localhost:3031/productImages/${product.images[0]}`}
+                          src={getProductImageUrl(product.images[0])}
                           className="card-img-top"
                           alt={product.productName}
                           style={{ height: '250px', objectFit: 'cover' }}
@@ -362,7 +363,7 @@ export default function AdminPage() {
                     {store.backgroundImage && (
                       <div className="position-relative">
                         <img
-                          src={`http://localhost:3031/storeAssets/${store.backgroundImage}`}
+                          src={getStoreImageUrl(store.backgroundImage)}
                           className="card-img-top"
                           alt={store.storeName}
                           style={{ height: '200px', objectFit: 'cover' }}
@@ -378,7 +379,7 @@ export default function AdminPage() {
                       <div className="d-flex align-items-center mb-3">
                         {store.propic && (
                           <img
-                            src={`http://localhost:3031/storeAssets/${store.propic}`}
+                            src={getStoreImageUrl(store.propic)}
                             alt={store.storeName}
                             className="rounded-circle me-3"
                             style={{ width: '50px', height: '50px', objectFit: 'cover' }}

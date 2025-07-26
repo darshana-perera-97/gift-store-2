@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { buildApiUrl, getStoreImageUrl, getProductImageUrl } from '../apiConfig';
 
 export default function StoreManagement() {
   const { storeName } = useParams();
@@ -36,7 +37,7 @@ export default function StoreManagement() {
   const fetchProducts = async (storeId) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:3031/products/${storeId}`);
+      const response = await fetch(buildApiUrl(`/products/${storeId}`));
       const data = await response.json();
       setProducts(data);
     } catch (error) {
@@ -52,7 +53,7 @@ export default function StoreManagement() {
     setLoginError('');
 
     try {
-      const response = await fetch('http://localhost:3031/viewStores');
+      const response = await fetch(buildApiUrl('/viewStores'));
       const stores = await response.json();
       const foundStore = stores.find(s => s.storeName === storeName && s.email === loginForm.email);
 
@@ -81,7 +82,7 @@ export default function StoreManagement() {
 
   const handleStatusChange = async (productId, newStatus) => {
     try {
-      const response = await fetch('http://localhost:3031/updateProductStatus', {
+      const response = await fetch(buildApiUrl('/updateProductStatus'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productId, status: newStatus })
@@ -103,7 +104,7 @@ export default function StoreManagement() {
   const handleDeleteProduct = async (productId) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
-        const response = await fetch('http://localhost:3031/deleteProduct', {
+        const response = await fetch(buildApiUrl('/deleteProduct'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ productId })
@@ -273,7 +274,7 @@ export default function StoreManagement() {
             <div className="col-md-2">
               {store.propic && (
                 <img
-                  src={`http://localhost:3031/storeAssets/${store.propic}`}
+                  src={getStoreImageUrl(store.propic)}
                   alt={store.storeName}
                   className="img-fluid rounded"
                   style={{ maxHeight: '80px', objectFit: 'cover' }}
@@ -385,7 +386,7 @@ export default function StoreManagement() {
                         <div className="d-flex align-items-center">
                           {product.images[0] && (
                             <img
-                              src={`http://localhost:3031/productImages/${product.images[0]}`}
+                              src={getProductImageUrl(product.images[0])}
                               alt={product.productName}
                               className="rounded me-3"
                               style={{ width: '50px', height: '50px', objectFit: 'cover' }}

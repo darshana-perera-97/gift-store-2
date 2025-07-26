@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { buildApiUrl, getStoreImageUrl } from '../apiConfig';
 
 export default function PublicStores() {
   const [stores, setStores] = useState([]);
@@ -9,7 +10,7 @@ export default function PublicStores() {
   const fetchStores = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:3031/viewStores');
+      const res = await fetch(buildApiUrl('/viewStores'));
       const data = await res.json();
       // Only show active stores for public view
       const activeStores = data.filter(store => store.status === 'active');
@@ -125,7 +126,7 @@ export default function PublicStores() {
               <div className="card h-100 store-card">
                 {store.propic && (
                   <img
-                    src={`http://localhost:3031/storeAssets/${store.propic}`}
+                    src={getStoreImageUrl(store.propic)}
                     className="card-img-top"
                     alt={store.storeName}
                     style={{ height: '200px', objectFit: 'cover' }}

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../components/AuthProvider';
 import StoreEditModal from '../components/StoreEditModal';
+import { buildApiUrl, getStoreImageUrl } from '../apiConfig';
 
 export default function StoreList() {
   const { user } = useContext(AuthContext);
@@ -23,7 +24,7 @@ export default function StoreList() {
   const fetchStores = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:3031/viewStores');
+      const res = await fetch(buildApiUrl('/viewStores'));
       const data = await res.json();
       setStores(data);
     } catch (err) {
@@ -35,7 +36,7 @@ export default function StoreList() {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch('http://localhost:3031/allOrders');
+      const res = await fetch(buildApiUrl('/allOrders'));
       const data = await res.json();
       setOrders(data);
     } catch (err) {
@@ -140,7 +141,7 @@ export default function StoreList() {
 
   const handleStatusChange = async (storeId, newStatus) => {
     try {
-      const res = await fetch('http://localhost:3031/changeStatus', {
+      const res = await fetch(buildApiUrl('/changeStatus'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ storeId, status: newStatus })
@@ -324,7 +325,7 @@ export default function StoreList() {
                               <div className="d-flex align-items-center">
                                 {store.propic && (
                                   <img
-                                    src={`http://localhost:3031/storeAssets/${store.propic}`}
+                                    src={getStoreImageUrl(store.propic)}
                                     alt={store.storeName}
                                     className="rounded-circle me-3"
                                     style={{ width: '40px', height: '40px', objectFit: 'cover' }}

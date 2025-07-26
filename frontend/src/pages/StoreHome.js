@@ -1,6 +1,7 @@
 // src/pages/StoreHome.js
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { buildApiUrl, getStoreImageUrl, getProductImageUrl } from '../apiConfig';
 
 export default function StoreHome() {
   const { storeId } = useParams();
@@ -15,7 +16,7 @@ export default function StoreHome() {
       navigate('/store/login');
       return;
     }
-    fetch(`http://localhost:3031/products/${storeId}`)
+    fetch(buildApiUrl(`/products/${storeId}`))
       .then(r => r.json())
       .then(setProducts)
       .catch(console.error);
@@ -32,7 +33,7 @@ export default function StoreHome() {
       <p>{store.description}</p>
       {store.backgroundImage && (
         <img
-          src={`http://localhost:3031/storeAssets/${store.backgroundImage}`}
+          src={getStoreImageUrl(store.backgroundImage)}
           alt="bg"
           style={{ maxWidth: '100%', marginBottom: 16 }}
         />
@@ -63,7 +64,7 @@ export default function StoreHome() {
             <Link to={`/store/${storeId}/product/${p.productId}`}>
               {p.images[0] && (
                 <img
-                  src={`http://localhost:3031/productImages/${p.images[0]}`}
+                  src={getProductImageUrl(p.images[0])}
                   alt={p.productName}
                   style={{ width: '100%', height: 100, objectFit: 'cover' }}
                 />

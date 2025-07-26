@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { buildApiUrl, getProductImageUrl } from '../apiConfig';
 
 export default function EditProduct() {
   const { storeName, productId } = useParams();
@@ -23,7 +24,7 @@ export default function EditProduct() {
     const fetchData = async () => {
       try {
         // Fetch store info
-        const storeRes = await fetch('http://localhost:3031/viewStores');
+        const storeRes = await fetch(buildApiUrl('/viewStores'));
         const stores = await storeRes.json();
         const foundStore = stores.find(s => s.storeName === storeName);
         if (foundStore) {
@@ -31,7 +32,7 @@ export default function EditProduct() {
         }
 
         // Fetch product info
-        const productRes = await fetch(`http://localhost:3031/products/${foundStore.storeId}`);
+        const productRes = await fetch(buildApiUrl(`/products/${foundStore.storeId}`));
         const products = await productRes.json();
         const foundProduct = products.find(p => p.productId === productId);
         if (foundProduct) {
@@ -114,7 +115,7 @@ export default function EditProduct() {
       formData.includes.filter(inc => inc.trim()).forEach(i => form.append('includes', i));
       images.slice(0, 5).forEach(img => form.append('images', img));
 
-      const res = await fetch('http://localhost:3031/updateProduct', {
+      const res = await fetch(buildApiUrl('/updateProduct'), {
         method: 'POST',
         body: form,
       });
@@ -385,7 +386,7 @@ export default function EditProduct() {
                 <div className="col-md-4">
                   {product.images[0] && (
                     <img
-                      src={`http://localhost:3031/productImages/${product.images[0]}`}
+                      src={getProductImageUrl(product.images[0])}
                       alt={product.productName}
                       className="img-fluid rounded"
                       style={{ maxHeight: '200px', objectFit: 'cover' }}

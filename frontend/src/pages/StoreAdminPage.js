@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { buildApiUrl, getStoreImageUrl, getProductImageUrl } from '../apiConfig';
 
 export default function StoreAdminPage() {
   const { storeName } = useParams();
@@ -24,12 +25,12 @@ export default function StoreAdminPage() {
         setLoading(true);
 
         // Fetch products
-        const productsResponse = await fetch(`http://localhost:3031/products/${store.storeId}`);
+        const productsResponse = await fetch(buildApiUrl(`/products/${store.storeId}`));
         const productsData = await productsResponse.json();
         setProducts(productsData);
 
         // Fetch orders
-        const ordersResponse = await fetch(`http://localhost:3031/storeOrders/${store.storeId}`);
+        const ordersResponse = await fetch(buildApiUrl(`/storeOrders/${store.storeId}`));
         const ordersData = await ordersResponse.json();
         setOrders(ordersData);
 
@@ -50,7 +51,7 @@ export default function StoreAdminPage() {
 
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
-      const response = await fetch('http://localhost:3031/updateOrderStatus', {
+      const response = await fetch(buildApiUrl('/updateOrderStatus'), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -60,7 +61,7 @@ export default function StoreAdminPage() {
 
       if (response.ok) {
         // Refresh orders after status update
-        const ordersResponse = await fetch(`http://localhost:3031/storeOrders/${store.storeId}`);
+        const ordersResponse = await fetch(buildApiUrl(`/storeOrders/${store.storeId}`));
         const ordersData = await ordersResponse.json();
         setOrders(ordersData);
       }
@@ -168,7 +169,7 @@ export default function StoreAdminPage() {
                 <div className="col-md-2">
                   {store.propic && (
                     <img
-                      src={`http://localhost:3031/storeAssets/${store.propic}`}
+                      src={getStoreImageUrl(store.propic)}
                       alt={store.storeName}
                       className="img-fluid rounded"
                       style={{ maxHeight: '100px', objectFit: 'cover' }}
@@ -368,7 +369,7 @@ export default function StoreAdminPage() {
                         <div className="card h-100 border-0 shadow-sm">
                           {product.images && product.images[0] && (
                             <img
-                              src={`http://localhost:3031/productImages/${product.images[0]}`}
+                              src={getProductImageUrl(product.images[0])}
                               className="card-img-top"
                               alt={product.productName}
                               style={{ height: '200px', objectFit: 'cover' }}

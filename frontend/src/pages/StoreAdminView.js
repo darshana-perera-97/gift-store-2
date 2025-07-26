@@ -1,6 +1,7 @@
 // src/pages/StoreAdminView.js
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { buildApiUrl, getProductImageUrl } from '../apiConfig';
 
 export default function StoreAdminView({ store }) {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ export default function StoreAdminView({ store }) {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch(`http://localhost:3031/products/${store.storeId}`);
+      const response = await fetch(buildApiUrl(`/products/${store.storeId}`));
       const data = await response.json();
       setProducts(data);
     } catch (error) {
@@ -26,7 +27,7 @@ export default function StoreAdminView({ store }) {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch(`http://localhost:3031/storeOrders/${store.storeId}`);
+      const response = await fetch(buildApiUrl(`/storeOrders/${store.storeId}`));
       const data = await response.json();
       setOrders(data);
     } catch (error) {
@@ -38,7 +39,7 @@ export default function StoreAdminView({ store }) {
 
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
-      const response = await fetch('http://localhost:3031/updateOrderStatus', {
+      const response = await fetch(buildApiUrl('/updateOrderStatus'), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -201,7 +202,7 @@ export default function StoreAdminView({ store }) {
                         <div className="card h-100 border-0 shadow-sm" style={{ borderRadius: '0' }}>
                           {product.images && product.images[0] && (
                             <img
-                              src={`http://localhost:3031/productImages/${product.images[0]}`}
+                              src={getProductImageUrl(product.images[0])}
                               className="card-img-top"
                               alt={product.productName}
                               style={{ height: '200px', objectFit: 'cover' }}

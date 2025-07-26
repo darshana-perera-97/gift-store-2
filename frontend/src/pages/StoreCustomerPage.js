@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { buildApiUrl, getStoreImageUrl, getProductImageUrl } from '../apiConfig';
 
 export default function StoreCustomerPage() {
   const { storeName } = useParams();
@@ -12,7 +13,7 @@ export default function StoreCustomerPage() {
     const fetchData = async () => {
       try {
         // Load store data by storeName
-        const storesResponse = await fetch("http://localhost:3031/viewStores");
+        const storesResponse = await fetch(buildApiUrl("/viewStores"));
         const allStores = await storesResponse.json();
         const currentStore = allStores.find((s) => s.storeName === storeName);
         
@@ -24,7 +25,7 @@ export default function StoreCustomerPage() {
         setStore(currentStore);
 
         // Load store products
-        const productsResponse = await fetch(`http://localhost:3031/products/${currentStore.storeId}`);
+        const productsResponse = await fetch(buildApiUrl(`/products/${currentStore.storeId}`));
         const storeProducts = await productsResponse.json();
         setProducts(storeProducts);
       } catch (error) {
@@ -64,7 +65,7 @@ export default function StoreCustomerPage() {
       {store.backgroundImage && (
         <div className="position-relative">
           <img
-            src={`http://localhost:3031/storeAssets/${store.backgroundImage}`}
+            src={getStoreImageUrl(store.backgroundImage)}
             alt="Store Banner"
             className="w-100"
             style={{ height: '300px', objectFit: 'cover' }}
@@ -80,7 +81,7 @@ export default function StoreCustomerPage() {
             <div className="d-flex align-items-center">
               {store.propic && (
                 <img
-                  src={`http://localhost:3031/storeAssets/${store.propic}`}
+                  src={getStoreImageUrl(store.propic)}
                   alt={store.storeName}
                   className="rounded-circle me-3"
                   style={{ width: '80px', height: '80px', objectFit: 'cover' }}
@@ -123,7 +124,7 @@ export default function StoreCustomerPage() {
                       <div className="card product-card h-100">
                         {product.images[0] && (
                           <img
-                            src={`http://localhost:3031/productImages/${product.images[0]}`}
+                            src={getProductImageUrl(product.images[0])}
                             className="card-img-top"
                             alt={product.productName}
                             style={{ height: '200px', objectFit: 'cover' }}

@@ -5,18 +5,19 @@
 // =============================================================================
 
 // MAIN BACKEND URL - CHANGE THIS TO UPDATE ALL API CALLS
-const BACKEND_URL = 'http://localhost:3031';
+const BACKEND_URL = "http://69.197.187.24:3031";
+// const BACKEND_URL = 'http://localhost:3031';
 
 // Environment-specific URLs (optional - for different environments)
 const ENVIRONMENT_URLS = {
-  development: 'http://localhost:3031',
-  production: 'https://your-production-api.com', // Change this
-  staging: 'https://your-staging-api.com', // Change this
+  development: "http://69.197.187.24:3031",
+  production: "https://your-production-api.com", // Change this
+  staging: "https://your-staging-api.com", // Change this
 };
 
 // Get the current environment
 const getCurrentEnvironment = () => {
-  return process.env.NODE_ENV || 'development';
+  return process.env.NODE_ENV || "development";
 };
 
 // Get the appropriate URL for current environment
@@ -28,34 +29,34 @@ const getBackendUrl = () => {
 // API Endpoints
 const API_ENDPOINTS = {
   // Store Management
-  VIEW_STORES: '/viewStores',
-  ADD_STORE: '/addStore',
-  CHANGE_STATUS: '/changeStatus',
-  
+  VIEW_STORES: "/viewStores",
+  ADD_STORE: "/addStore",
+  CHANGE_STATUS: "/changeStatus",
+
   // Product Management
-  VIEW_PRODUCTS: '/viewProducts',
-  ADD_PRODUCT: '/addProduct',
-  UPDATE_PRODUCT: '/updateProduct',
-  DELETE_PRODUCT: '/deleteProduct',
-  
+  VIEW_PRODUCTS: "/viewProducts",
+  ADD_PRODUCT: "/addProduct",
+  UPDATE_PRODUCT: "/updateProduct",
+  DELETE_PRODUCT: "/deleteProduct",
+
   // Order Management
-  ORDER_PRODUCT: '/orderProduct',
-  STORE_ORDERS: '/storeOrders',
-  ALL_ORDERS: '/allOrders',
-  UPDATE_ORDER_STATUS: '/updateOrderStatus',
-  
+  ORDER_PRODUCT: "/orderProduct",
+  STORE_ORDERS: "/storeOrders",
+  ALL_ORDERS: "/allOrders",
+  UPDATE_ORDER_STATUS: "/updateOrderStatus",
+
   // File Uploads
-  UPLOAD_STORE_IMAGE: '/uploadStoreImage',
-  UPLOAD_PRODUCT_IMAGE: '/uploadProductImage',
-  
+  UPLOAD_STORE_IMAGE: "/uploadStoreImage",
+  UPLOAD_PRODUCT_IMAGE: "/uploadProductImage",
+
   // Store Requests
-  STORE_REQUEST: '/storeRequest',
+  STORE_REQUEST: "/storeRequest",
 };
 
 // Asset Paths
 const ASSET_PATHS = {
-  STORE_IMAGES: '/storeAssets',
-  PRODUCT_IMAGES: '/productImages',
+  STORE_IMAGES: "/storeAssets",
+  PRODUCT_IMAGES: "/productImages",
 };
 
 // =============================================================================
@@ -92,7 +93,7 @@ export const fetchStores = async () => {
     const response = await fetch(buildApiUrl(API_ENDPOINTS.VIEW_STORES));
     return await response.json();
   } catch (error) {
-    console.error('Error fetching stores:', error);
+    console.error("Error fetching stores:", error);
     return [];
   }
 };
@@ -103,7 +104,7 @@ export const fetchProducts = async () => {
     const response = await fetch(buildApiUrl(API_ENDPOINTS.VIEW_PRODUCTS));
     return await response.json();
   } catch (error) {
-    console.error('Error fetching products:', error);
+    console.error("Error fetching products:", error);
     return [];
   }
 };
@@ -111,10 +112,12 @@ export const fetchProducts = async () => {
 // Fetch orders for a specific store
 export const fetchStoreOrders = async (storeId) => {
   try {
-    const response = await fetch(buildApiUrl(`${API_ENDPOINTS.STORE_ORDERS}/${storeId}`));
+    const response = await fetch(
+      buildApiUrl(`${API_ENDPOINTS.STORE_ORDERS}/${storeId}`)
+    );
     return await response.json();
   } catch (error) {
-    console.error('Error fetching store orders:', error);
+    console.error("Error fetching store orders:", error);
     return [];
   }
 };
@@ -125,7 +128,7 @@ export const fetchAllOrders = async () => {
     const response = await fetch(buildApiUrl(API_ENDPOINTS.ALL_ORDERS));
     return await response.json();
   } catch (error) {
-    console.error('Error fetching all orders:', error);
+    console.error("Error fetching all orders:", error);
     return [];
   }
 };
@@ -133,14 +136,17 @@ export const fetchAllOrders = async () => {
 // Update order status
 export const updateOrderStatus = async (orderId, status) => {
   try {
-    const response = await fetch(buildApiUrl(API_ENDPOINTS.UPDATE_ORDER_STATUS), {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ orderId, status })
-    });
+    const response = await fetch(
+      buildApiUrl(API_ENDPOINTS.UPDATE_ORDER_STATUS),
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId, status }),
+      }
+    );
     return await response.json();
   } catch (error) {
-    console.error('Error updating order status:', error);
+    console.error("Error updating order status:", error);
     return { success: false, error: error.message };
   }
 };
@@ -149,13 +155,13 @@ export const updateOrderStatus = async (orderId, status) => {
 export const placeOrder = async (orderData) => {
   try {
     const response = await fetch(buildApiUrl(API_ENDPOINTS.ORDER_PRODUCT), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData)
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderData),
     });
     return await response.json();
   } catch (error) {
-    console.error('Error placing order:', error);
+    console.error("Error placing order:", error);
     return { success: false, error: error.message };
   }
 };
@@ -164,13 +170,13 @@ export const placeOrder = async (orderData) => {
 export const changeStoreStatus = async (storeId, status) => {
   try {
     const response = await fetch(buildApiUrl(API_ENDPOINTS.CHANGE_STATUS), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ storeId, status })
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ storeId, status }),
     });
     return await response.json();
   } catch (error) {
-    console.error('Error changing store status:', error);
+    console.error("Error changing store status:", error);
     return { success: false, error: error.message };
   }
 };
@@ -192,9 +198,9 @@ export const ASSETS = ASSET_PATHS;
 export const ENVIRONMENT = {
   current: getCurrentEnvironment(),
   url: getBackendUrl(),
-  isDevelopment: getCurrentEnvironment() === 'development',
-  isProduction: getCurrentEnvironment() === 'production',
-  isStaging: getCurrentEnvironment() === 'staging',
+  isDevelopment: getCurrentEnvironment() === "development",
+  isProduction: getCurrentEnvironment() === "production",
+  isStaging: getCurrentEnvironment() === "staging",
 };
 
 // =============================================================================
@@ -222,4 +228,4 @@ const imageUrl = getStoreImageUrl('store-image.jpg');
 
 // Check environment:
 console.log('Backend URL:', BACKEND_BASE_URL);
-*/ 
+*/

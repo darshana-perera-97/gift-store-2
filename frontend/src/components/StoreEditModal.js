@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { buildApiUrl, getStoreImageUrl, getProductImageUrl } from '../apiConfig';
 
 export default function StoreEditModal({ store, onClose }) {
   const [formData, setFormData] = useState({
@@ -22,7 +23,7 @@ export default function StoreEditModal({ store, onClose }) {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch(`http://localhost:3031/products/${store.storeId}`);
+      const response = await fetch(buildApiUrl(`/products/${store.storeId}`));
       const data = await response.json();
       setProducts(data);
     } catch (error) {
@@ -41,7 +42,7 @@ export default function StoreEditModal({ store, onClose }) {
   const handleStatusChange = async (newStatus) => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:3031/changeStatus', {
+      const res = await fetch(buildApiUrl('/changeStatus'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ storeId: store.storeId, status: newStatus })
@@ -63,7 +64,7 @@ export default function StoreEditModal({ store, onClose }) {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const res = await fetch('http://localhost:3031/updateStore', {
+      const res = await fetch(buildApiUrl('/updateStore'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -196,7 +197,7 @@ export default function StoreEditModal({ store, onClose }) {
                             <div className="mb-3">
                               <label className="form-label">Profile Picture</label>
                               <img
-                                src={`http://localhost:3031/storeAssets/${store.propic}`}
+                                src={getStoreImageUrl(store.propic)}
                                 alt="Profile"
                                 className="img-fluid rounded"
                                 style={{ maxHeight: '150px', objectFit: 'cover' }}
@@ -207,7 +208,7 @@ export default function StoreEditModal({ store, onClose }) {
                             <div>
                               <label className="form-label">Background Image</label>
                               <img
-                                src={`http://localhost:3031/storeAssets/${store.backgroundImage}`}
+                                src={getStoreImageUrl(store.backgroundImage)}
                                 alt="Background"
                                 className="img-fluid rounded"
                                 style={{ maxHeight: '150px', objectFit: 'cover' }}
@@ -396,7 +397,7 @@ export default function StoreEditModal({ store, onClose }) {
                           <div className="card h-100">
                             {product.images[0] && (
                               <img
-                                src={`http://localhost:3031/productImages/${product.images[0]}`}
+                                src={getProductImageUrl(product.images[0])}
                                 className="card-img-top"
                                 alt={product.productName}
                                 style={{ height: '150px', objectFit: 'cover' }}
@@ -442,7 +443,7 @@ export default function StoreEditModal({ store, onClose }) {
                           {store.propic ? (
                             <div>
                               <img
-                                src={`http://localhost:3031/storeAssets/${store.propic}`}
+                                src={getStoreImageUrl(store.propic)}
                                 alt="Profile"
                                 className="img-fluid rounded mb-3"
                                 style={{ maxHeight: '200px', objectFit: 'cover' }}
@@ -477,7 +478,7 @@ export default function StoreEditModal({ store, onClose }) {
                           {store.backgroundImage ? (
                             <div>
                               <img
-                                src={`http://localhost:3031/storeAssets/${store.backgroundImage}`}
+                                src={getStoreImageUrl(store.backgroundImage)}
                                 alt="Background"
                                 className="img-fluid rounded mb-3"
                                 style={{ maxHeight: '200px', objectFit: 'cover' }}

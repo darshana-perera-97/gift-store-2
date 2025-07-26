@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { buildApiUrl } from '../apiConfig';
 
 const districts = [
   'Colombo','Gampaha','Kalutara','Kandy','Matale','Nuwara Eliya',
@@ -64,7 +65,7 @@ export default function StoreRequest() {
       }
 
       // Send store request to backend API
-      const response = await fetch('http://localhost:3031/storeRequest', {
+      const response = await fetch(buildApiUrl('/storeRequest'), {
         method: 'POST',
         body: data,
       });

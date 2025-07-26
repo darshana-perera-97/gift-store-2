@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { buildApiUrl, getStoreImageUrl } from '../apiConfig';
 
 export default function AllStores() {
   const [stores, setStores] = useState([]);
@@ -13,7 +14,7 @@ export default function AllStores() {
 
   const fetchStores = async () => {
     try {
-      const response = await fetch('http://localhost:3031/viewStores');
+      const response = await fetch(buildApiUrl('/viewStores'));
       const data = await response.json();
       setStores(data);
     } catch (error) {
@@ -155,7 +156,7 @@ export default function AllStores() {
                        }}>
                     {store.backgroundImage && (
                       <img
-                        src={`http://localhost:3031/storeAssets/${store.backgroundImage}`}
+                        src={getStoreImageUrl(store.backgroundImage)}
                         className="card-img-top"
                         alt={store.storeName}
                         style={{ height: '200px', objectFit: 'cover' }}
@@ -168,7 +169,7 @@ export default function AllStores() {
                       <div className="d-flex align-items-center mb-3">
                         {store.propic && (
                           <img
-                            src={`http://localhost:3031/storeAssets/${store.propic}`}
+                            src={getStoreImageUrl(store.propic)}
                             alt={store.storeName}
                             className="rounded-circle me-3"
                             style={{ width: '50px', height: '50px', objectFit: 'cover' }}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { buildApiUrl } from '../apiConfig';
 
 const districts = [
   'Colombo','Gampaha','Kalutara','Kandy','Matale','Nuwara Eliya',
@@ -46,7 +47,7 @@ export default function AddStore() {
     }
 
     try {
-      const res = await fetch('http://localhost:3031/createStore', {
+      const res = await fetch(buildApiUrl('/createStore'), {
         method: 'POST',
         body: data
       });

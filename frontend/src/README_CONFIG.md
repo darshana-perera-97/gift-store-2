@@ -17,7 +17,7 @@ import { buildApiUrl, buildAssetUrl, API_CONFIG } from '../config';
 ### 2. Make API Calls
 Instead of:
 ```javascript
-const response = await fetch('http://localhost:3031/viewStores');
+const response = await fetch('http://69.197.187.24:3031/viewStores');
 ```
 
 Use:
@@ -28,7 +28,7 @@ const response = await fetch(buildApiUrl('/viewStores'));
 ### 3. Build Asset URLs
 Instead of:
 ```javascript
-src={`http://localhost:3031/storeAssets/${imageName}`}
+src={`http://69.197.187.24:3031/storeAssets/${imageName}`}
 ```
 
 Use:
@@ -42,7 +42,7 @@ src={buildAssetUrl('/storeAssets', imageName)}
 Edit `src/config.js`:
 ```javascript
 export const API_CONFIG = {
-  BASE_URL: 'http://localhost:3031', // Change this
+  BASE_URL: 'http://69.197.187.24:3031', // Change this
   // ... rest of config
 };
 ```
@@ -52,7 +52,7 @@ The config supports multiple environments:
 ```javascript
 export const ENV_CONFIG = {
   development: {
-    BASE_URL: 'http://localhost:3031',
+    BASE_URL: 'http://69.197.187.24:3031',
   },
   production: {
     BASE_URL: 'https://your-production-api.com',
@@ -68,14 +68,14 @@ export const ENV_CONFIG = {
 ### `buildApiUrl(endpoint)`
 Builds a complete API URL:
 ```javascript
-buildApiUrl('/viewStores') // Returns: http://localhost:3031/viewStores
+buildApiUrl('/viewStores') // Returns: http://69.197.187.24:3031/viewStores
 ```
 
 ### `buildAssetUrl(assetPath, filename)`
 Builds a complete asset URL:
 ```javascript
 buildAssetUrl('/storeAssets', 'store-image.jpg') 
-// Returns: http://localhost:3031/storeAssets/store-image.jpg
+// Returns: http://69.197.187.24:3031/storeAssets/store-image.jpg
 ```
 
 ### `getConfig()`

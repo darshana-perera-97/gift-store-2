@@ -1,7 +1,7 @@
 // Backend API Configuration
 export const API_CONFIG = {
   // Main backend URL - change this to switch between environments
-  BASE_URL: 'http://localhost:3031',
+  BASE_URL: 'http://69.197.187.24:3031',
   
   // API endpoints
   ENDPOINTS: {
@@ -50,7 +50,7 @@ export const buildAssetUrl = (assetPath, filename) => {
 // Environment-specific configurations
 export const ENV_CONFIG = {
   development: {
-    BASE_URL: 'http://localhost:3031',
+    BASE_URL: 'http://69.197.187.24:3031',
   },
   production: {
     BASE_URL: 'https://your-production-api.com', // Change this to your production URL

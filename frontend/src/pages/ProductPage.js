@@ -1,6 +1,7 @@
 // src/pages/ProductPage.js
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { buildApiUrl, getProductImageUrl } from '../apiConfig';
 
 export default function ProductPage() {
   const { productId } = useParams();
@@ -23,12 +24,12 @@ export default function ProductPage() {
         setLoading(true);
         
         // Fetch product
-        const productResponse = await fetch(`http://localhost:3031/product/${productId}`);
+        const productResponse = await fetch(buildApiUrl(`/product/${productId}`));
         const productData = await productResponse.json();
         setProduct(productData);
 
         // Fetch store info
-        const storesResponse = await fetch('http://localhost:3031/viewStores');
+        const storesResponse = await fetch(buildApiUrl('/viewStores'));
         const storesData = await storesResponse.json();
         const currentStore = storesData.find(s => s.storeId === productData.storeId);
         setStore(currentStore);
@@ -52,7 +53,7 @@ export default function ProductPage() {
     setMessage('');
 
     try {
-      const res = await fetch('http://localhost:3031/orderProduct', {
+      const res = await fetch(buildApiUrl('/orderProduct'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -155,7 +156,7 @@ export default function ProductPage() {
               <div className="mb-3">
               {product.images && product.images.length > 0 ? (
                   <img
-                    src={`http://localhost:3031/productImages/${product.images[selectedImage]}`}
+                    src={getProductImageUrl(product.images[selectedImage])}
                     alt={product.productName}
                     className="img-fluid w-100"
                     style={{ 
@@ -181,7 +182,7 @@ export default function ProductPage() {
                   {product.images.map((img, i) => (
                     <div key={i} className="col-3">
                       <img
-                        src={`http://localhost:3031/productImages/${img}`}
+                        src={getProductImageUrl(img)}
                         alt={`${product.productName} ${i + 1}`}
                         className={`img-fluid cursor-pointer ${selectedImage === i ? 'border border-dark' : 'border'}`}
                         style={{ 

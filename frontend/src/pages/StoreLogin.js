@@ -1,6 +1,7 @@
 // src/pages/StoreLogin.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { buildApiUrl } from '../apiConfig';
 
 export default function StoreLogin() {
   const [email, setEmail] = useState('');
@@ -11,7 +12,7 @@ export default function StoreLogin() {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:3031/viewStores');
+      const res = await fetch(buildApiUrl('/viewStores'));
       const stores = await res.json();
       const store = stores.find(
         s => s.email === email && s.password === password && s.status === 'active'

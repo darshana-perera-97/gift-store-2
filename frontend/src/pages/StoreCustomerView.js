@@ -1,6 +1,7 @@
 // src/pages/StoreCustomerView.js
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { buildApiUrl, getStoreImageUrl, getProductImageUrl } from '../apiConfig';
 
 export default function StoreCustomerView({ storeId }) {
   const [store, setStore] = useState(null);
@@ -8,14 +9,14 @@ export default function StoreCustomerView({ storeId }) {
 
   useEffect(() => {
     // load store details
-    fetch('http://localhost:3031/viewStores')
+    fetch(buildApiUrl('/viewStores'))
       .then(r => r.json())
       .then(all => all.find(s => s.storeId === storeId))
       .then(setStore)
       .catch(console.error);
 
     // load this store’s products
-    fetch(`http://localhost:3031/products/${storeId}`)
+    fetch(buildApiUrl(`/products/${storeId}`))
       .then(r => r.json())
       .then(setProducts)
       .catch(console.error);
@@ -28,7 +29,7 @@ export default function StoreCustomerView({ storeId }) {
       {/* banner */}
       {store.backgroundImage && (
         <img
-          src={`http://localhost:3031/storeAssets/${store.backgroundImage}`}
+          src={getStoreImageUrl(store.backgroundImage)}
           alt="banner"
           style={{
             width: '100%',
@@ -66,7 +67,7 @@ export default function StoreCustomerView({ storeId }) {
           >
             {p.images[0] && (
               <img
-                src={`http://localhost:3031/productImages/${p.images[0]}`}
+                src={getProductImageUrl(p.images[0])}
                 alt={p.productName}
                 style={{ width: '100%', height: 120, objectFit: 'cover' }}
               />

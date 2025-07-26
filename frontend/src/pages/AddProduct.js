@@ -1,6 +1,7 @@
 // src/pages/AddProduct.js
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { buildApiUrl } from '../apiConfig';
 
 export default function AddProduct() {
   const { storeName } = useParams();
@@ -19,7 +20,7 @@ export default function AddProduct() {
     // Fetch store information to display store name
     const fetchStoreInfo = async () => {
       try {
-        const res = await fetch('http://localhost:3031/viewStores');
+        const res = await fetch(buildApiUrl('/viewStores'));
         const stores = await res.json();
         const store = stores.find(s => s.storeName === storeName);
         if (store) {
@@ -78,7 +79,7 @@ export default function AddProduct() {
     images.slice(0, 5).forEach(img => form.append('images', img));
 
     try {
-      const res = await fetch('http://localhost:3031/addProduct', {
+      const res = await fetch(buildApiUrl('/addProduct'), {
         method: 'POST',
         body: form,
       });

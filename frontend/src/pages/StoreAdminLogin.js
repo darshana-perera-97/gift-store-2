@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { buildApiUrl, getStoreImageUrl } from '../apiConfig';
 
 export default function StoreAdminLogin() {
   const { storeName } = useParams();
@@ -14,7 +15,7 @@ export default function StoreAdminLogin() {
     // Fetch store information to display store name
     const fetchStoreInfo = async () => {
       try {
-        const res = await fetch('http://localhost:3031/viewStores');
+        const res = await fetch(buildApiUrl('/viewStores'));
         const stores = await res.json();
         const store = stores.find(s => s.storeName === storeName);
         if (store) {
@@ -34,7 +35,7 @@ export default function StoreAdminLogin() {
     setError('');
 
     try {
-      const res = await fetch('http://localhost:3031/viewStores');
+      const res = await fetch(buildApiUrl('/viewStores'));
       const list = await res.json();
       const store = list.find(
         s => s.storeName === storeName &&
@@ -198,7 +199,7 @@ export default function StoreAdminLogin() {
                         <div className="d-flex align-items-center">
                           {storeInfo.propic && (
                             <img
-                              src={`http://localhost:3031/storeAssets/${storeInfo.propic}`}
+                              src={getStoreImageUrl(storeInfo.propic)}
                               alt={storeInfo.storeName}
                               className="rounded-circle me-3"
                               style={{ width: '40px', height: '40px', objectFit: 'cover' }}

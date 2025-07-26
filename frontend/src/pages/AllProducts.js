@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { buildApiUrl, getProductImageUrl } from '../apiConfig';
 
 export default function AllProducts() {
   const [products, setProducts] = useState([]);
@@ -14,7 +15,7 @@ export default function AllProducts() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('http://localhost:3031/viewProducts');
+      const response = await fetch(buildApiUrl('/viewProducts'));
       const data = await response.json();
       setProducts(data);
     } catch (error) {
@@ -188,7 +189,7 @@ export default function AllProducts() {
                   {product.images && product.images[0] && (
                     <div className="position-relative">
                       <img
-                        src={`http://localhost:3031/productImages/${product.images[0]}`}
+                        src={getProductImageUrl(product.images[0])}
                         className="card-img-top"
                         alt={product.productName}
                         style={{ height: '250px', objectFit: 'cover' }}

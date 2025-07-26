@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { buildApiUrl, getStoreImageUrl } from '../apiConfig';
 
 export default function StoreModal({ store, onClose }) {
   const [info, setInfo]       = useState(store);
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    fetch(`http://localhost:3031/products/${store.storeId}`)
+    fetch(buildApiUrl(`/products/${store.storeId}`))
       .then(r => r.json())
       .then(setProducts)
       .catch(console.error);
@@ -13,7 +14,7 @@ export default function StoreModal({ store, onClose }) {
 
   const toggleStatus = async () => {
     const newStatus = info.status === 'active' ? 'suspended' : 'active';
-    const res = await fetch('http://localhost:3031/changeStatus', {
+    const res = await fetch(buildApiUrl('/changeStatus'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ storeId: store.storeId, status: newStatus })
@@ -60,14 +61,14 @@ export default function StoreModal({ store, onClose }) {
 
         {info.propic && (
           <img
-            src={`http://localhost:3031/storeAssets/${info.propic}`}
+            src={getStoreImageUrl(info.propic)}
             alt="profile"
             style={{ maxWidth: 100, marginRight: 12 }}
           />
         )}
         {info.backgroundImage && (
           <img
-            src={`http://localhost:3031/storeAssets/${info.backgroundImage}`}
+            src={getStoreImageUrl(info.backgroundImage)}
             alt="background"
             style={{ maxWidth: 100 }}
           />
